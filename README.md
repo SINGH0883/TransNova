@@ -40,6 +40,61 @@ You type in Hindi ──► TransNova translates ──► Recipient sees Englis
 Sender writes English ──► TransNova translates ──► You read in Hindi
 ```
 
+---
+
+## 🔄 Application Workflow Chart
+
+```mermaid
+flowchart TD
+    subgraph Client ["💻 Web Chat Platform (DOM)"]
+        A["⌨️ User Types Message"] --> B["📤 Hits Send / Enter"]
+        C["📥 Incoming Message Received"]
+    end
+
+    subgraph ContentScript ["⚡ Content Script (content.js & platforms.js)"]
+        B --> D["🛡️ Intercept Input Event"]
+        C --> E["👁️ MutationObserver Detects Node"]
+    end
+
+    subgraph BackgroundService ["⚙️ Service Worker & Translation Engine"]
+        D --> F{"⚡ Check LRU Cache"}
+        E --> F
+        F -- "Hit (Instant)" --> H["✨ Formatted Translation"]
+        F -- "Miss" --> G["🌐 MyMemory API Fetch"]
+        G --> H
+    end
+
+    subgraph DOMUpdate ["🎨 UI Rendering"]
+        H --> I["🔄 Replace Input Text / Inject Translated Node"]
+        I --> J["🌐 Attach Interactive Original Text Badge"]
+    end
+
+    subgraph PopupControl ["🎛️ Popup Panel (popup.js)"]
+        K["🔀 Mode Switcher / Alt+T Shortcut"] --> L["💾 chrome.storage Sync"]
+        L --> ContentScript
+    end
+```
+
+### Detailed Execution Flow
+
+1. **Initialization**: On page load, `content.js` uses `platforms.js` to identify the active chat app (WhatsApp Web, Telegram, Discord, Slack, Messenger) and attaches DOM observers.
+2. **Outgoing Translation Flow**:
+   - User types in Hindi/Hinglish and triggers message send.
+   - `content.js` intercepts the event before default dispatch.
+   - Text is routed to `translator.js` -> checks in-memory LRU cache.
+   - If not cached, sends message via `chrome.runtime.sendMessage` to `service-worker.js` to perform MyMemory API translation.
+   - Input text field is updated in-place and native submit event is fired in English.
+3. **Incoming Translation Flow**:
+   - `MutationObserver` detects new incoming message elements in the chat stream.
+   - Extracts text content and verifies language.
+   - Fetches translation to Hindi and replaces/appends translated content.
+   - Injects a `🌐` toggle badge enabling the user to switch between original and translated views with one click.
+4. **Settings & Control**:
+   - `popup.js` allows live toggling of translation modes (हि → EN, EN → हि, Bidirectional) and shortcut key (`Alt+T`).
+   - Syncs configuration across tabs via `chrome.storage.sync`.
+
+---
+
 ### Translation Modes
 
 | Mode | Your Input | Their View | Their Input | Your View |
