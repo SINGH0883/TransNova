@@ -58,7 +58,7 @@ Sender writes English ──► TransNova translates ──► You read in Hindi
 
 1. **Clone or download** this repository:
    ```bash
-   git clone https://github.com/your-username/TransNova.git
+   git clone https://github.com/SINGH0883/TransNova.git
    ```
 
 2. Open **Google Chrome** and navigate to:
@@ -127,6 +127,19 @@ TransNova/
 
 ---
 
+## 🌐 Translation API
+
+TransNova uses the **[MyMemory Translation API](https://mymemory.translated.net/)** — a free, no-signup-required translation service.
+
+| Tier | Daily Limit | Requirement |
+|---|---|---|
+| **Anonymous** | 5,000 characters/day | None — works out of the box |
+| **Extended** | 50,000 characters/day | Provide an email in the API request |
+
+> **Note:** The usage tracker in the popup helps you monitor your daily consumption.
+
+---
+
 ## 🛠️ Supported Platforms
 
 | Platform | Status | Scope |
@@ -154,22 +167,22 @@ You can customize this shortcut in `chrome://extensions/shortcuts`.
 ### Translation not working?
 
 1. Make sure the extension is **enabled** (check the popup — status should say "Active")
-2. Verify you're on **web.whatsapp.com**
+2. Verify you're on a supported web chat platform (e.g. WhatsApp, Telegram, Discord, Slack, Messenger)
 3. Check the **usage counter** — you may have hit the daily limit
 4. Open DevTools (`F12`) → Console tab → look for `[TransNova]` logs
 
 ### Messages not being detected?
 
-WhatsApp Web occasionally updates its DOM structure. If messages aren't being detected:
-1. Try **refreshing** the WhatsApp Web page
+Web chat platforms occasionally update their DOM structure. If messages aren't being detected:
+1. Try **refreshing** the chat tab
 2. Check for extension **updates**
 3. Open an issue on GitHub with the browser console output
 
 ### Input text not being replaced?
 
-Some WhatsApp Web updates change the input field structure. The extension uses multiple fallback selectors, but if it still fails:
+Some chat platform updates change the input field structure. The extension uses multiple fallback selectors, but if it still fails:
 1. Reload the extension from `chrome://extensions`
-2. Refresh WhatsApp Web
+2. Refresh the web chat page
 
 ---
 
@@ -178,30 +191,10 @@ Some WhatsApp Web updates change the input field structure. The extension uses m
 Contributions are welcome! Here's how you can help:
 
 1. **Fork** this repository
-2. **Create** a feature branch: `git checkout -b feature/telegram-support`
-3. **Commit** your changes: `git commit -m "Add Telegram Web adapter"`
-4. **Push** to the branch: `git push origin feature/telegram-support`
+2. **Create** a feature branch: `git checkout -b feature/new-platform`
+3. **Commit** your changes: `git commit -m "Add new platform adapter"`
+4. **Push** to the branch: `git push origin feature/new-platform`
 5. **Open** a Pull Request
-
-### Adding a New Platform
-
-The adapter system in `lib/platforms.js` makes it easy to add new chat platforms:
-
-```javascript
-// Add your platform to the platforms object
-newPlatform: {
-  name: 'Platform Name',
-  hostname: 'platform.example.com',
-  selectors: {
-    messageContainer: '...',
-    incomingMessage: '...',
-    inputBox: '...',
-    // ... other selectors
-  },
-  detect: () => window.location.hostname === 'platform.example.com',
-  // ... adapter methods
-}
-```
 
 ---
 
