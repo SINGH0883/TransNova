@@ -112,23 +112,20 @@
   }
 
   function restoreAllOriginalMessages() {
-    if (!platform || !platform.selectors || !platform.selectors.messageRow) return;
-    const messages = document.querySelectorAll(platform.selectors.messageRow);
-    messages.forEach((msgEl) => {
-      const textSpan = platform.getTextElement(msgEl);
-      if (textSpan && translationMap.has(textSpan)) {
-        const data = translationMap.get(textSpan);
-        if (data && data.original) {
-          textSpan.textContent = data.original;
-        }
-        translationMap.delete(textSpan);
+    document.querySelectorAll('.transnova-badge, .transnova-loading').forEach((badge) => badge.remove());
+
+    document.querySelectorAll('[data-transnova-original]').forEach((el) => {
+      const originalText = el.getAttribute('data-transnova-original');
+      if (originalText !== null) {
+        el.textContent = originalText;
       }
-      if (msgEl.parentElement) {
-        const badges = msgEl.parentElement.querySelectorAll('.transnova-badge, .transnova-loading');
-        badges.forEach((b) => b.remove());
-      }
-      msgEl.removeAttribute('data-transnova-processed');
-      processedMessages.delete(msgEl);
+      el.removeAttribute('data-transnova-original');
+      el.removeAttribute('data-transnova-translated');
+      el.removeAttribute('data-transnova-showing');
+    });
+
+    document.querySelectorAll('[data-transnova-processed]').forEach((el) => {
+      el.removeAttribute('data-transnova-processed');
     });
   }
 
@@ -198,51 +195,16 @@
       if (inputEl.style) inputEl.style.opacity = '';
 
       if (response && response.success && response.translation) {
-        console.log('[TransNova Chat] ✓ Translated:', text, '➔', response.translation);
-
+        console.log('[TransNova Chat] ✓ Translated in input box:', text, '➔', response.translation);
         await TransNovaPlatforms.setInputText(inputEl, response.translation);
-
-        skipInterceptionUntil = Date.now() + 2500;
-        await sleep(300);
-
-        const sendBtn = platform.getSendButton();
-        if (sendBtn) {
-          const actualBtn = sendBtn.closest('button') || sendBtn;
-          triggerClick(actualBtn);
-        } else if (inputEl.form) {
-          inputEl.form.requestSubmit ? inputEl.form.requestSubmit() : inputEl.form.submit();
-        } else {
-          inputEl.dispatchEvent(new KeyboardEvent('keydown', {
-            key: 'Enter', code: 'Enter', keyCode: 13, which: 13,
-            bubbles: true, cancelable: true,
-          }));
-          inputEl.dispatchEvent(new KeyboardEvent('keyup', {
-            key: 'Enter', code: 'Enter', keyCode: 13, which: 13,
-            bubbles: true, cancelable: true,
-          }));
-        }
       } else {
-        // Fallback: send original text if translation failed or context reloaded
-        console.warn('[TransNova Chat] Translation fallback: sending original text');
-        skipInterceptionUntil = Date.now() + 2000;
-        const sendBtn = platform.getSendButton();
-        if (sendBtn) {
-          const actualBtn = sendBtn.closest('button') || sendBtn;
-          triggerClick(actualBtn);
-        } else if (inputEl.form) {
-          inputEl.form.requestSubmit ? inputEl.form.requestSubmit() : inputEl.form.submit();
-        } else {
-          inputEl.dispatchEvent(new KeyboardEvent('keydown', {
-            key: 'Enter', code: 'Enter', keyCode: 13, which: 13,
-            bubbles: true, cancelable: true,
-          }));
-        }
+        console.warn('[TransNova Chat] Translation fallback: keeping original text in input');
       }
     } catch (err) {
       if (inputEl.style) inputEl.style.opacity = '';
       console.error('[TransNova Chat] Translation error:', err.message);
     } finally {
-      setTimeout(() => { isTranslatingInput = false; }, 400);
+      setTimeout(() => { isTranslatingInput = false; }, 200);
     }
   }
 
@@ -296,12 +258,17 @@
     if (!rowSelector) return;
 
     const messages = document.querySelectorAll(rowSelector);
-    messages.forEach((msg) => translateIncomingMessage(msg));
+    messages.forEach((msg) => {
+      if (platform.isIncoming(msg)) {
+        translateIncomingMessage(msg);
+      }
+    });
   }
 
   // ── Translate Incoming Messages ──────────────────────────────
   async function translateIncomingMessage(msgEl) {
     if (isContextInvalidated || !msgEl) return;
+    if (!platform.isIncoming(msgEl)) return;
     if (processedMessages.has(msgEl) || msgEl.hasAttribute('data-transnova-processed')) return;
 
     const text = platform.getMessageText(msgEl);
@@ -353,11 +320,9 @@
       loadingBadge.remove();
 
       if (response && response.success && response.translation && response.translation.trim().toLowerCase() !== text.trim().toLowerCase()) {
-        translationMap.set(textSpan, {
-          original: text,
-          translated: response.translation,
-          showingTranslation: true,
-        });
+        textSpan.setAttribute('data-transnova-original', text);
+        textSpan.setAttribute('data-transnova-translated', response.translation);
+        textSpan.setAttribute('data-transnova-showing', 'translated');
 
         textSpan.textContent = response.translation;
         const badge = createTranslationBadge(textSpan, text, response.translation);
@@ -403,19 +368,20 @@
 
     badge.addEventListener('click', (e) => {
       e.stopPropagation();
-      const data = translationMap.get(textSpan);
-      if (!data) return;
+      const orig = textSpan.getAttribute('data-transnova-original') || original;
+      const trans = textSpan.getAttribute('data-transnova-translated') || translated;
+      const showing = textSpan.getAttribute('data-transnova-showing') || 'translated';
 
-      if (data.showingTranslation) {
-        textSpan.textContent = data.original;
-        data.showingTranslation = false;
+      if (showing === 'translated') {
+        textSpan.textContent = orig;
+        textSpan.setAttribute('data-transnova-showing', 'original');
         badge.classList.add('transnova-badge--original');
-        badge.title = `Translated: ${data.translated}`;
+        badge.title = `Translated: ${trans}`;
       } else {
-        textSpan.textContent = data.translated;
-        data.showingTranslation = true;
+        textSpan.textContent = trans;
+        textSpan.setAttribute('data-transnova-showing', 'translated');
         badge.classList.remove('transnova-badge--original');
-        badge.title = `Original: ${data.original}`;
+        badge.title = `Original: ${orig}`;
       }
     });
 
@@ -464,16 +430,25 @@
       if (indicator) indicator.remove();
       return;
     }
+
+    const sendMode = settings.sendMode || 'off';
+    const readMode = settings.readMode || 'off';
+
+    if (sendMode === 'off' && readMode === 'off') {
+      if (indicator) indicator.remove();
+      return;
+    }
+
     if (!indicator) {
       indicator = document.createElement('div');
       indicator.className = 'transnova-indicator';
       document.body.appendChild(indicator);
     }
-    const sendMode = settings.sendMode || (settings.mode === 'en-to-hi-send' ? 'hi' : settings.mode === 'en-to-hi' || settings.mode === 'read-en' ? 'off' : 'en');
-    const readMode = settings.readMode || (settings.mode === 'hi-to-en' || settings.mode === 'en-to-hi-send' ? 'off' : settings.mode === 'read-en' ? 'en' : 'hi');
 
-    let text = 'हि ↔ EN';
+    let text = 'TransNova';
     if (sendMode === 'en' && readMode === 'hi') text = 'हि ↔ EN (Both)';
+    else if (sendMode === 'en' && readMode === 'en') text = 'हि → EN (Both)';
+    else if (sendMode === 'hi' && readMode === 'hi') text = 'EN → हि (Both)';
     else if (sendMode === 'en') text = 'हि → EN (Send)';
     else if (sendMode === 'hi') text = 'EN → हि (Send)';
     else if (readMode === 'hi') text = 'EN → हि (Read)';
