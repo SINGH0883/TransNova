@@ -135,8 +135,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
+  const swapModesBtn = document.getElementById('swapModesBtn');
+
   sendModeSelect.addEventListener('change', saveSettings);
   readModeSelect.addEventListener('change', saveSettings);
+
+  if (swapModesBtn) {
+    swapModesBtn.addEventListener('click', async () => {
+      const temp = sendModeSelect.value;
+      sendModeSelect.value = readModeSelect.value;
+      readModeSelect.value = temp;
+
+      const icon = swapModesBtn.querySelector('.swap-icon');
+      if (icon) {
+        icon.classList.add('spinning');
+        setTimeout(() => icon.classList.remove('spinning'), 400);
+      }
+
+      await saveSettings();
+    });
+  }
 
   // ── Initialize ─────────────────────────────────────────────
   await loadSettings();
