@@ -180,18 +180,6 @@ TransNova/
     └── popup.js                # Settings controller
 ```
 
----
-
-## 🌐 Translation API
-
-TransNova uses the **[MyMemory Translation API](https://mymemory.translated.net/)** — a free, no-signup-required translation service.
-
-| Tier | Daily Limit | Requirement |
-|---|---|---|
-| **Anonymous** | 5,000 characters/day | None — works out of the box |
-| **Extended** | 50,000 characters/day | Provide an email in the API request |
-
-> **Note:** The usage tracker in the popup helps you monitor your daily consumption.
 
 ---
 
