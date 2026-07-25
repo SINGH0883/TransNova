@@ -1,0 +1,448 @@
+/**
+ * TransNova — Cyber Mint & Electric Cyan Premium Glassmorphism Theme
+ * High-tech UI with glowing cyan-emerald ambient lighting, obsidian frosted cards,
+ * glowing neon toggles, fluid micro-interactions, and tight compact layout.
+ */
+
+/* ── Reset & Typography ────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 340px;
+  min-height: auto;
+  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
+  background: #050811;
+  color: #f1f5f9;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+/* ── Popup Layout Container ────────────────────────────────── */
+.popup-container {
+  position: relative;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 0%, #0c1626 0%, #050811 100%);
+}
+
+/* ── Ambient Background Lighting ──────────────────────────── */
+.bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(rgba(6, 182, 212, 0.08) 1px, transparent 1px);
+  background-size: 14px 14px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bg-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(50px);
+  pointer-events: none;
+  z-index: 0;
+  animation: orb-pulse 8s ease-in-out infinite alternate;
+}
+
+.bg-orb--1 {
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.35), transparent 70%);
+  top: -60px;
+  right: -40px;
+}
+
+.bg-orb--2 {
+  width: 170px;
+  height: 170px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.3), transparent 70%);
+  bottom: 10px;
+  left: -50px;
+  animation-delay: -3s;
+}
+
+.bg-orb--3 {
+  width: 130px;
+  height: 130px;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.25), transparent 70%);
+  bottom: -30px;
+  right: 10px;
+  animation-delay: -5s;
+}
+
+@keyframes orb-pulse {
+  0% { transform: scale(1) translate(0, 0); opacity: 0.8; }
+  50% { transform: scale(1.1) translate(6px, -10px); opacity: 1; }
+  100% { transform: scale(0.95) translate(-4px, 6px); opacity: 0.75; }
+}
+
+/* ── Header ────────────────────────────────────────────────── */
+.header {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 2px;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-logo-wrapper {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(16, 185, 129, 0.2));
+  border: 1px solid rgba(52, 211, 153, 0.35);
+  box-shadow: 0 4px 14px rgba(6, 182, 212, 0.25);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.header-logo-wrapper:hover {
+  transform: scale(1.08) rotate(-4deg);
+}
+
+.header-logo-img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  z-index: 1;
+}
+
+.logo-glow {
+  position: absolute;
+  inset: -2px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #06b6d4, #10b981);
+  filter: blur(7px);
+  opacity: 0.45;
+  z-index: 0;
+}
+
+.header-title {
+  font-size: 18px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffffff 0%, #a5f3fc 50%, #34d399 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.4px;
+  line-height: 1.1;
+}
+
+.header-subtitle {
+  font-size: 10.5px;
+  color: #94a3b8;
+  font-weight: 500;
+  margin-top: 1px;
+}
+
+.header-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: rgba(16, 185, 129, 0.14);
+  border: 1px solid rgba(52, 211, 153, 0.35);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
+  transition: all 0.3s ease;
+}
+
+.header-status.inactive {
+  background: rgba(239, 68, 68, 0.14);
+  border-color: rgba(239, 68, 68, 0.35);
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.2);
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  animation: pulse-dot 2s infinite;
+}
+
+.header-status.inactive .status-dot {
+  background: #ef4444;
+  box-shadow: 0 0 8px #ef4444;
+  animation: none;
+}
+
+.status-text {
+  font-size: 9.5px;
+  font-weight: 800;
+  color: #34d399;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.header-status.inactive .status-text {
+  color: #f87171;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.75); }
+}
+
+/* ── Frosted Glass Cards ──────────────────────────────────── */
+.card {
+  position: relative;
+  z-index: 1;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(13, 22, 38, 0.75) 0%, rgba(8, 15, 28, 0.6) 100%);
+  border: 1px solid rgba(6, 182, 212, 0.18);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.card:hover {
+  border-color: rgba(52, 211, 153, 0.35);
+  box-shadow: 0 4px 18px rgba(6, 182, 212, 0.12);
+}
+
+/* ── Toggle Switch Card ────────────────────────────────────── */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.toggle-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.toggle-label {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.toggle-hint {
+  font-size: 10px;
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 26px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch-slider {
+  position: absolute;
+  inset: 0;
+  border-radius: 26px;
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(100, 116, 139, 0.35);
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.switch-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #94a3b8;
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.switch input:checked + .switch-slider {
+  background: linear-gradient(135deg, #06b6d4 0%, #10b981 100%);
+  border-color: rgba(52, 211, 153, 0.6);
+  box-shadow: 0 0 14px rgba(6, 182, 212, 0.45);
+}
+
+.switch input:checked + .switch-slider .switch-knob {
+  left: 23px;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* ── Custom Select Dropdowns ──────────────────────────────── */
+.card--setting {
+  padding: 12px 14px;
+}
+
+.select-wrapper {
+  position: relative;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.custom-select {
+  width: 100%;
+  padding: 9px 30px 9px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: inherit;
+  color: #f1f5f9;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(6, 182, 212, 0.25);
+  border-radius: 9px;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  transition: all 0.25s ease;
+}
+
+.custom-select:hover, .custom-select:focus {
+  border-color: rgba(52, 211, 153, 0.5);
+  background: rgba(15, 23, 42, 0.95);
+  box-shadow: 0 0 14px rgba(6, 182, 212, 0.2);
+}
+
+.custom-select option {
+  background: #0b1320;
+  color: #f1f5f9;
+  padding: 8px;
+}
+
+.select-arrow {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 9px;
+  color: #38bdf8;
+  pointer-events: none;
+  transition: transform 0.2s ease;
+}
+
+/* ── Platform Connection Card ─────────────────────────────── */
+.card--platform {
+  padding: 8px 12px;
+  background: linear-gradient(135deg, rgba(11, 19, 33, 0.6) 0%, rgba(6, 12, 22, 0.5) 100%);
+}
+
+.platform-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.platform-dot-pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
+  flex-shrink: 0;
+}
+
+.platform-icon {
+  color: #38bdf8;
+  flex-shrink: 0;
+}
+
+.platform-name {
+  font-size: 10.5px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* ── Shortcut Hint Footer & Developer Credits ──────────────── */
+.popup-footer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding-top: 2px;
+}
+
+.shortcut-hint {
+  text-align: center;
+  font-size: 10px;
+  color: #64748b;
+}
+
+.shortcut-hint kbd {
+  display: inline-block;
+  padding: 1px 4px;
+  border-radius: 4px;
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  font-family: inherit;
+  font-size: 9px;
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+.developer-credits {
+  font-size: 10.5px;
+  color: #94a3b8;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  letter-spacing: 0.2px;
+}
+
+.developer-credits strong {
+  background: linear-gradient(135deg, #a78bfa 0%, #f472b6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 800;
+}
+
+.heart-icon {
+  display: inline-block;
+  font-size: 11px;
+  animation: heart-beat 1.5s ease-in-out infinite;
+}
+
+@keyframes heart-beat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.25); }
+}
+
+/* ── Disabled Toggle State ────────────────────────────────── */
+.popup-container.disabled .card--mode,
+.popup-container.disabled .card--stats {
+  opacity: 0.35;
+  pointer-events: none;
+  filter: grayscale(0.6);
+  transition: all 0.4s ease;
+}

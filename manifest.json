@@ -1,0 +1,68 @@
+{
+  "manifest_version": 3,
+  "name": "TransNova — Universal Hindi ↔ English Chat Translator",
+  "version": "2.0.0",
+  "description": "Real-time Hindi ↔ English chat translator for web chatting platforms (WhatsApp Web, Telegram Web, Discord Web, Slack Web, Messenger Web).",
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://api.mymemory.translated.net/*",
+    "https://translate.googleapis.com/*",
+    "https://web.whatsapp.com/*",
+    "https://web.telegram.org/*",
+    "https://discord.com/*",
+    "https://app.slack.com/*",
+    "https://www.messenger.com/*",
+    "https://facebook.com/*"
+  ],
+  "background": {
+    "service_worker": "background/service-worker.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://web.whatsapp.com/*",
+        "https://web.telegram.org/*",
+        "https://discord.com/*",
+        "https://app.slack.com/*",
+        "https://www.messenger.com/*",
+        "https://facebook.com/messages/*",
+        "https://www.facebook.com/messages/*"
+      ],
+      "js": [
+        "lib/translator.js",
+        "lib/platforms.js",
+        "content/content.js"
+      ],
+      "css": [
+        "content/content.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "commands": {
+    "toggle-translation": {
+      "suggested_key": {
+        "default": "Alt+T"
+      },
+      "description": "Toggle translation on/off"
+    }
+  }
+}

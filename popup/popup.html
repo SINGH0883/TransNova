@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TransNova</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <!-- Ambient Background Light Orbs -->
+    <div class="bg-orb bg-orb--1"></div>
+    <div class="bg-orb bg-orb--2"></div>
+    <div class="bg-orb bg-orb--3"></div>
+    <div class="bg-grid"></div>
+
+    <!-- Header Section -->
+    <header class="header">
+      <div class="header-brand">
+        <div class="header-logo-wrapper">
+          <img src="../icons/icon256.png" alt="TransNova Logo" class="header-logo-img">
+          <div class="logo-glow"></div>
+        </div>
+        <div class="header-text">
+          <h1 class="header-title">TransNova</h1>
+          <p class="header-subtitle">Universal Web Chat AI</p>
+        </div>
+      </div>
+      <div class="header-status" id="statusBadge">
+        <span class="status-dot"></span>
+        <span class="status-text">Active</span>
+      </div>
+    </header>
+
+    <!-- Main Translation Toggle Card -->
+    <div class="card card--toggle">
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <span class="toggle-label">Real-Time Translation</span>
+          <span class="toggle-hint" id="toggleHint">Active across all web platforms</span>
+        </div>
+        <label class="switch" id="mainToggle">
+          <input type="checkbox" id="enabledToggle" checked>
+          <span class="switch-slider">
+            <span class="switch-knob"></span>
+          </span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Outgoing (Send As) Selection Card -->
+    <div class="card card--setting">
+      <div class="card-header-row">
+        <span class="card-label">Outgoing Messages (Send)</span>
+        <span class="card-badge" id="sendModeBadge">Outgoing Off</span>
+      </div>
+      <div class="select-wrapper">
+        <select class="custom-select" id="sendModeSelect">
+          <option value="off" selected>⛔ Original (Do Not Translate Outgoing)</option>
+          <option value="en">🇮🇳 Type Hindi ➔ 🇬🇧 Send in English</option>
+          <option value="hi">🇬🇧 Type English ➔ 🇮🇳 Send in Hindi</option>
+        </select>
+        <div class="select-arrow">▼</div>
+      </div>
+    </div>
+
+    <!-- Incoming (Read As) Selection Card -->
+    <div class="card card--setting">
+      <div class="card-header-row">
+        <span class="card-label">Incoming Messages (Read)</span>
+        <span class="card-badge" id="readModeBadge">Incoming Off</span>
+      </div>
+      <div class="select-wrapper">
+        <select class="custom-select" id="readModeSelect">
+          <option value="off" selected>⛔ Original (Do Not Translate Incoming)</option>
+          <option value="hi">🇬🇧 Incoming English ➔ 🇮🇳 View in Hindi</option>
+          <option value="en">🇮🇳 Incoming Hindi ➔ 🇬🇧 View in English</option>
+        </select>
+        <div class="select-arrow">▼</div>
+      </div>
+    </div>
+
+    <!-- Platform Connection Info -->
+    <div class="card card--platform">
+      <div class="platform-row">
+        <div class="platform-dot-pulse"></div>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" class="platform-icon">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+        </svg>
+        <span class="platform-name" id="platformName">Detecting chat platform...</span>
+      </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="popup-footer">
+      <div class="shortcut-hint">
+        Press <kbd>Alt</kbd> + <kbd>T</kbd> to toggle instantly
+      </div>
+      <div class="developer-credits">
+        <span>Developed with <span class="heart-icon">❤️</span> by <strong>Yuvraj Singh</strong></span>
+      </div>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
