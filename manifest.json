@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "TransNova — Universal Hindi ↔ English Chat Translator",
   "version": "2.0.0",
-  "description": "Real-time Hindi ↔ English chat translator for web chatting platforms (WhatsApp Web, Telegram Web, Discord Web, Slack Web, Messenger Web).",
+  "description": "Real-time Hindi ↔ English chat translator for web chatting platforms (WhatsApp Web, Telegram Web, Discord Web, Slack Web, Messenger Web, Snapchat Web).",
   "permissions": [
     "storage",
     "activeTab"
@@ -15,7 +15,9 @@
     "https://discord.com/*",
     "https://app.slack.com/*",
     "https://www.messenger.com/*",
-    "https://facebook.com/*"
+    "https://facebook.com/*",
+    "https://web.snapchat.com/*",
+    "https://www.snapchat.com/*"
   ],
   "background": {
     "service_worker": "background/service-worker.js"
@@ -29,7 +31,9 @@
         "https://app.slack.com/*",
         "https://www.messenger.com/*",
         "https://facebook.com/messages/*",
-        "https://www.facebook.com/messages/*"
+        "https://www.facebook.com/messages/*",
+        "https://web.snapchat.com/*",
+        "https://www.snapchat.com/*"
       ],
       "js": [
         "lib/translator.js",

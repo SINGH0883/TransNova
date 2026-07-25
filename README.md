@@ -6,7 +6,7 @@
 
 **Real-time Hindi ↔ English AI Translation for Web Chat Platforms**
 
-Type in Hindi, send in English. Receive in English, read in Hindi. Works seamlessly across supported web chat apps like WhatsApp Web, Telegram Web, Discord Web, Slack Web, and Messenger Web.
+Type in Hindi, send in English. Receive in English, read in Hindi. Works seamlessly across supported web chat apps like WhatsApp Web, Telegram Web, Discord Web, Slack Web, Messenger Web, and Snapchat Web.
 
 [![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)](#installation)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-8B5CF6?style=for-the-badge)](#)
@@ -152,7 +152,7 @@ TransNova features **independent controls** for outgoing and incoming messages:
 
 ### Getting Started
 
-1. Open any supported web chat app (e.g., [WhatsApp Web](https://web.whatsapp.com), [Telegram Web](https://web.telegram.org), [Discord](https://discord.com), [Slack](https://app.slack.com), [Messenger](https://www.messenger.com)).
+1. Open any supported web chat app (e.g., [WhatsApp Web](https://web.whatsapp.com), [Telegram Web](https://web.telegram.org), [Discord](https://discord.com), [Slack](https://app.slack.com), [Messenger](https://www.messenger.com), [Snapchat Web](https://web.snapchat.com)).
 2. Look for the **"TransNova Universal"** toast notification in the bottom-right corner.
 3. Click the **TransNova icon** in your toolbar to open the glassmorphism control panel.
 4. Set your preferred **Outgoing (Send)** and **Incoming (Read)** modes.
@@ -207,6 +207,7 @@ TransNova/
 | **Discord Web** | ✅ Fully Supported | Text channels, DMs, contenteditable input replacement |
 | **Slack Web** | ✅ Fully Supported | Workspace channels & direct messages |
 | **Messenger / Facebook** | ✅ Fully Supported | Chat threads & popup conversation bubbles |
+| **Snapchat Web** | ✅ Fully Supported | Real-time chat history & slate/contenteditable input interception |
 
 ---
 

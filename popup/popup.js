@@ -37,6 +37,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     'slack.com',
     'messenger.com',
     'facebook.com',
+    'web.snapchat.com',
+    'snapchat.com',
   ];
 
   // ── Load Current Settings ──────────────────────────────────
