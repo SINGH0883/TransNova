@@ -1,15 +1,16 @@
-# TransNova — Hindi ↔ English Web Chat Translator
+# TransNova — Universal Hindi ↔ English Web Chat Translator
 
 <div align="center">
 
 <img src="./icons/icon128.png" width="128" alt="TransNova Logo" />
 
-**Real-time Hindi ↔ English translation for Web Chat Platforms**
+**Real-time Hindi ↔ English AI Translation for Web Chat Platforms**
 
-Type in Hindi, send in English. Receive in English, read in Hindi. Works exclusively on web chat apps like WhatsApp Web, Telegram Web, Discord Web, Slack Web, and Messenger Web.
+Type in Hindi, send in English. Receive in English, read in Hindi. Works seamlessly across supported web chat apps like WhatsApp Web, Telegram Web, Discord Web, Slack Web, and Messenger Web.
 
 [![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)](#installation)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-8B5CF6?style=for-the-badge)](#)
+[![Version 2.0.0](https://img.shields.io/badge/Version-2.0.0-06B6D4?style=for-the-badge)](#)
 [![License](https://img.shields.io/badge/License-MIT-22C55E?style=for-the-badge)](#license)
 
 </div>
@@ -20,24 +21,25 @@ Type in Hindi, send in English. Receive in English, read in Hindi. Works exclusi
 
 | Feature | Description |
 |---|---|
-| 🇮🇳 → 🇬🇧 **Hindi to English** | Type messages in Hindi/Hinglish — automatically translated to English before sending |
-| 🇬🇧 → 🇮🇳 **English to Hindi** | Incoming English messages are displayed to you in Hindi |
-| 🔄 **Bidirectional Mode** | Enable both directions simultaneously for seamless bilingual chat |
-| 🔀 **One-Click Toggle** | Switch between Hindi→English, English→Hindi, or Both from the popup |
-| ⌨️ **Keyboard Shortcut** | Press `Alt+T` to instantly toggle translation on/off |
-| 💬 **Original Text Toggle** | Click the translation badge on any message to view the original text |
-| ⚡ **Smart Caching** | LRU cache avoids redundant API calls for repeated phrases |
-| 🔍 **Auto Language Detection** | Detects Hindi (Devanagari script & Romanized Hinglish) vs English automatically |
-| 💬 **Chat Platform Exclusive** | Operates strictly on supported web chat platforms, keeping general browsing fast and clean |
+| 🌐 **Dual Engine Translation** | Powered by **Google Translate API** (primary engine for instant auto-detection & Hinglish) with **MyMemory API** fallback |
+| 🎛️ **Independent Send & Read Controls** | Configure outgoing translation (Send in English/Hindi) and incoming translation (Read in Hindi/English) separately |
+| 🇮🇳 → 🇬🇧 **Hindi to English** | Type in Devanagari Hindi or Hinglish — automatically translated to English before sending |
+| 🇬🇧 → 🇮🇳 **English to Hindi** | Incoming English messages are automatically rendered in Hindi |
+| 🔀 **Romanized Hinglish Support** | Detects and translates Romanized Hindi (*"kya haal hai", "kaise ho bhai"*) as accurately as Devanagari script (*"क्या हाल है"*) |
+| ⌨️ **Keyboard Shortcut** | Press `Alt + T` at any time to instantly toggle extension translation on/off |
+| 💬 **Interactive Original Text Badge** | Click the `🌐` badge on any translated message bubble to toggle between original and translated text |
+| ⚡ **Multi-Layer LRU Caching** | High-performance dual-tier caching (Content Script + Service Worker) avoids redundant API calls |
+| 🛡️ **Context Invalidation Guard** | Detects extension reloads/updates gracefully, showing clear toast guidance (`F5` refresh) without breaking chat input |
+| 📍 **Floating Status Indicator** | Non-intrusive floating badge on active chat tabs showing your current translation configuration |
 
 ---
 
 ## 📸 How It Works
 
 ```
-You type in Hindi ──► TransNova translates ──► Recipient sees English
-                         ↕
-Sender writes English ──► TransNova translates ──► You read in Hindi
+You type Hindi/Hinglish ──► Intercepted & Translated ──► Recipient receives English
+                                   ↕
+Sender writes English   ──► Intercepted & Translated ──► You view in Hindi
 ```
 
 ---
@@ -47,63 +49,78 @@ Sender writes English ──► TransNova translates ──► You read in Hindi
 ```mermaid
 flowchart TD
     subgraph Client ["💻 Web Chat Platform (DOM)"]
-        A["⌨️ User Types Message"] --> B["📤 Hits Send / Enter"]
+        A["⌨️ User Types Input"] --> B["📤 Hits Enter / Send Button"]
         C["📥 Incoming Message Received"]
     end
 
     subgraph ContentScript ["⚡ Content Script (content.js & platforms.js)"]
-        B --> D["🛡️ Intercept Input Event"]
-        C --> E["👁️ MutationObserver Detects Node"]
+        B --> D{"🛡️ Intercept Keydown"}
+        D -- "Send Mode Active" --> E["🔍 Detect Language (Devanagari / Hinglish)"]
+        C --> F["👁️ MutationObserver Detects Message Bubble"]
+        F --> G["🔍 Verify Read Mode & Filter Code"]
     end
 
-    subgraph BackgroundService ["⚙️ Service Worker & Translation Engine"]
-        D --> F{"⚡ Check LRU Cache"}
-        E --> F
-        F -- "Hit (Instant)" --> H["✨ Formatted Translation"]
-        F -- "Miss" --> G["🌐 MyMemory API Fetch"]
+    subgraph BackgroundService ["⚙️ Background Service Worker & Engine"]
+        E --> H{"⚡ Check LRU Cache"}
         G --> H
+        H -- "Cache Hit" --> K["✨ Formatted Translation"]
+        H -- "Cache Miss" --> I["🌐 Google Translate API (Primary)"]
+        I -- "Failure" --> J["🌐 MyMemory API (Fallback)"]
+        I -- "Success" --> K
+        J --> K
     end
 
-    subgraph DOMUpdate ["🎨 UI Rendering"]
-        H --> I["🔄 Replace Input Text / Inject Translated Node"]
-        I --> J["🌐 Attach Interactive Original Text Badge"]
+    subgraph DOMUpdate ["🎨 UI Rendering & Lexical AST Injection"]
+        K --> L["🔄 setInputText (Lexical AST / ContentEditable / Clipboard)"]
+        K --> M["💬 Render Translated Node + Inject Interactive 🌐 Badge"]
+        L --> N["🚀 Trigger Native Click / Submit"]
     end
 
-    subgraph PopupControl ["🎛️ Popup Panel (popup.js)"]
-        K["🔀 Mode Switcher / Alt+T Shortcut"] --> L["💾 chrome.storage Sync"]
-        L --> ContentScript
+    subgraph PopupControl ["🎛️ Control Panel (popup.js)"]
+        O["🎛️ Outgoing & Incoming Mode Selectors"] --> P["💾 chrome.storage.local Sync"]
+        Q["⌨️ Alt+T Shortcut Toggle"] --> P
+        P --> ContentScript
     end
 ```
 
 ### Detailed Execution Flow
 
-1. **Initialization**: On page load, `content.js` uses `platforms.js` to identify the active chat app (WhatsApp Web, Telegram, Discord, Slack, Messenger) and attaches DOM observers.
-2. **Outgoing Translation Flow**:
-   - User types in Hindi/Hinglish and triggers message send.
-   - `content.js` intercepts the event before default dispatch.
-   - Text is routed to `translator.js` -> checks in-memory LRU cache.
-   - If not cached, sends message via `chrome.runtime.sendMessage` to `service-worker.js` to perform MyMemory API translation.
-   - Input text field is updated in-place and native submit event is fired in English.
-3. **Incoming Translation Flow**:
-   - `MutationObserver` detects new incoming message elements in the chat stream.
-   - Extracts text content and verifies language.
-   - Fetches translation to Hindi and replaces/appends translated content.
-   - Injects a `🌐` toggle badge enabling the user to switch between original and translated views with one click.
-4. **Settings & Control**:
-   - `popup.js` allows live toggling of translation modes (हि → EN, EN → हि, Bidirectional) and shortcut key (`Alt+T`).
-   - Syncs configuration across tabs via `chrome.storage.sync`.
+1. **Initialization**: On tab load, `content.js` calls `TransNovaPlatforms.detectPlatform()` to check host permissions and bind to active adapters (WhatsApp Web, Telegram, Discord, Slack, Messenger).
+2. **Outgoing Interception & Lexical AST Injection**:
+   - User types in Hindi/Hinglish and hits `Enter`.
+   - `handleKeyDown` in `content.js` intercepts the event, verifies configured `sendMode`, and sends a `TRANSLATE` message to `service-worker.js`.
+   - Service worker queries Google Translate API (with MyMemory fallback) and caches the response.
+   - `setInputText()` cleanly clears the target input container using native selection/range manipulation (`execCommand`, Lexical AST updates, ClipboardEvent paste fallback) and triggers a simulated submit click.
+3. **Incoming Observation & Interactive Badging**:
+   - `MutationObserver` monitors real-time DOM changes for incoming message rows.
+   - Extracts text content, filters out code snippets/URLs, and fetches Hindi/English translation.
+   - Injects a `transnova-loading` spinner during fetch, followed by a `transnova-badge` (`🌐`).
+   - Clicking the badge toggles between original and translated text on the fly.
+4. **Resilience & Tab Synchronization**:
+   - `sendMessageSafe()` guards against Chrome Extension Context Invalidation (e.g. when updating the extension while tabs are open), notifying users to refresh with a toast instead of crashing inputs.
+   - Popup state changes sync live across all active tabs via `chrome.storage.local` and background broadcast messages.
 
 ---
 
-### Translation Modes
+## 🎛️ Translation Modes
 
-| Mode | Your Input | Their View | Their Input | Your View |
-|---|---|---|---|---|
-| **Send in English** | Hindi/Hinglish | English | — | — |
-| **Send in Hindi** | English | Devanagari Hindi | — | — |
-| **Read in Hindi** | — | — | English | Devanagari Hindi |
-| **Read in English** | — | — | Hindi/Hinglish | English |
-| **Bidirectional (Both)** ⭐ | Hindi/Hinglish | English | English / Hindi | Hindi / English |
+TransNova features **independent controls** for outgoing and incoming messages:
+
+### Outgoing Messages (Send)
+
+| Setting | Your Input | Recipient Sees |
+|---|---|---|
+| **Original (Off)** | Text sent as typed | Original text |
+| **Send in English** (`en`) | Hindi or Hinglish (*"kya kar rahe ho"*) | English (*"What are you doing"*) |
+| **Send in Hindi** (`hi`) | English (*"Where are you going?"*) | Devanagari Hindi (*"आप कहाँ जा रहे हैं?"*) |
+
+### Incoming Messages (Read)
+
+| Setting | Sender's Input | Your View |
+|---|---|---|
+| **Original (Off)** | Messages displayed as received | Original text |
+| **Read in Hindi** (`hi`) | Incoming English (*"Let's meet tomorrow"*) | Devanagari Hindi (*"चलिए कल मिलते हैं"*) + `🌐` Badge |
+| **Read in English** (`en`) | Incoming Hindi (*"आप कैसे हैं"*) | English (*"How are you"*) + `🌐` Badge |
 
 ---
 
@@ -121,11 +138,11 @@ flowchart TD
    chrome://extensions
    ```
 
-3. Enable **Developer mode** (toggle in the top-right corner)
+3. Enable **Developer mode** (toggle switch in the top-right corner).
 
-4. Click **Load unpacked**
+4. Click **Load unpacked**.
 
-5. Select the `TransNova` folder
+5. Select the `TransNova` project directory.
 
 6. The TransNova icon will appear in your Chrome toolbar 🎉
 
@@ -135,24 +152,18 @@ flowchart TD
 
 ### Getting Started
 
-1. Open any supported web chat platform (e.g. [WhatsApp Web](https://web.whatsapp.com), [Telegram Web](https://web.telegram.org))
-2. You'll see a **"TransNova Chat"** toast notification in the bottom-right
-3. **Click the TransNova icon** in your toolbar to open the control panel
-4. **Select your mode** and start chatting!
+1. Open any supported web chat app (e.g., [WhatsApp Web](https://web.whatsapp.com), [Telegram Web](https://web.telegram.org), [Discord](https://discord.com), [Slack](https://app.slack.com), [Messenger](https://www.messenger.com)).
+2. Look for the **"TransNova Universal"** toast notification in the bottom-right corner.
+3. Click the **TransNova icon** in your toolbar to open the glassmorphism control panel.
+4. Set your preferred **Outgoing (Send)** and **Incoming (Read)** modes.
 
-### Translation Modes
+### Quick Shortcut Toggle
 
-- **हि → EN (Send in English)** — Your Hindi/Hinglish messages are translated to English before sending
-- **EN → हि (Read in Hindi)** — Incoming English messages appear in Hindi
-- **हि ↔ EN (Both Directions)** — Full bidirectional translation (default)
-
-### Quick Toggle
-
-Press **`Alt + T`** at any time to toggle translation on/off without opening the popup.
+Press **`Alt + T`** to instantly pause or resume translation across all tabs without opening the popup.
 
 ### Viewing Original Text
 
-Every translated message has a small 🌐 badge. **Click it** to switch between the original and translated text.
+Every incoming translated message features a `🌐` badge. **Click it** to toggle between the original message and the translation.
 
 ---
 
@@ -160,84 +171,81 @@ Every translated message has a small 🌐 badge. **Click it** to switch between 
 
 ```
 TransNova/
-├── manifest.json               # Chrome Extension manifest (V3)
-├── icons/
-│   ├── icon16.png              # Toolbar icon
-│   ├── icon32.png              # Small icon
-│   ├── icon48.png              # Medium icon
-│   └── icon128.png             # Store / management page icon
+├── manifest.json               # Chrome Extension Manifest (V3)
+├── LICENSE                     # MIT License documentation
+├── README.md                   # Complete documentation
+├── icons/                      # Extension branding & toolbar icons
+│   ├── icon16.png
+│   ├── icon32.png
+│   ├── icon48.png
+│   ├── icon128.png
+│   └── icon256.png
 ├── lib/
-│   ├── translator.js           # Translation engine (API + cache + detection)
-│   └── platforms.js            # Chat platform DOM selectors & adapters
+│   ├── translator.js           # Hinglish dictionary, language detector & LRU cache
+│   └── platforms.js            # Platform selectors & Lexical/DOM input adapter engine
 ├── background/
-│   └── service-worker.js       # API relay, settings, keyboard shortcuts
+│   └── service-worker.js       # Background relay, Google/MyMemory APIs, settings sync
 ├── content/
-│   ├── content.js              # DOM observer + input interception
-│   └── content.css             # Badges, spinners, toasts (non-intrusive)
-└── popup/
-    ├── popup.html              # Extension popup panel
-    ├── popup.css               # Dark glassmorphism UI
-    └── popup.js                # Settings controller
+│   ├── content.js              # Interceptor, MutationObserver, toast & context protection
+│   └── content.css             # Glassmorphism toasts, indicators, loading spinners & badges
+├── popup/
+│   ├── popup.html              # Dark glassmorphism popup interface
+│   ├── popup.css               # Modern typography & glow effects
+│   └── popup.js                # Popup controller & tab detection
+└── debug/
+    └── diagnose.js             # Automated in-browser diagnostic tool
 ```
-
 
 ---
 
 ## 🛠️ Supported Platforms
 
-| Platform | Status | Scope |
+| Platform | Status | Features Supported |
 |---|---|---|
-| **WhatsApp Web** | ✅ Fully Supported | Real-time chat & inputs |
-| **Telegram Web** | ✅ Fully Supported | WebK & WebZ interfaces |
-| **Discord** | ✅ Fully Supported | Text channels & DMs |
-| **Slack** | ✅ Fully Supported | Workspaces & channels |
-| **Messenger / Facebook** | ✅ Fully Supported | Chat messages |
+| **WhatsApp Web** | ✅ Fully Supported | Lexical AST input replacement, message bubble translation, badges |
+| **Telegram Web** | ✅ Fully Supported | WebK & WebZ interfaces, input interception & incoming translation |
+| **Discord Web** | ✅ Fully Supported | Text channels, DMs, contenteditable input replacement |
+| **Slack Web** | ✅ Fully Supported | Workspace channels & direct messages |
+| **Messenger / Facebook** | ✅ Fully Supported | Chat threads & popup conversation bubbles |
 
 ---
 
 ## 🔑 Keyboard Shortcuts
 
-| Shortcut | Action |
-|---|---|
-| `Alt + T` | Toggle translation on/off |
+| Shortcut | Action | Scope |
+|---|---|---|
+| `Alt + T` | Toggle translation ON / PAUSED | Global across all web chat tabs |
 
-You can customize this shortcut in `chrome://extensions/shortcuts`.
+*You can customize shortcut bindings at `chrome://extensions/shortcuts`.*
 
 ---
 
-## 🐛 Troubleshooting
+## 🐛 Diagnostics & Troubleshooting
 
-### Translation not working?
+### Using the Built-In Diagnostic Tool
 
-1. Make sure the extension is **enabled** (check the popup — status should say "Active")
-2. Verify you're on a supported web chat platform (e.g. WhatsApp, Telegram, Discord, Slack, Messenger)
-3. Check the **usage counter** — you may have hit the daily limit
-4. Open DevTools (`F12`) → Console tab → look for `[TransNova]` logs
+If translation isn't working on a chat platform:
 
-### Messages not being detected?
+1. Open your web chat platform (e.g. WhatsApp Web).
+2. Press `F12` (or Right-Click ➔ Inspect) and open the **Console** tab.
+3. Open [`debug/diagnose.js`](file:///d:/CODE%20TUTORIAL/TransNova/debug/diagnose.js), copy its entire contents, paste it into the console, and hit `Enter`.
+4. The diagnostic tool will test DOM selectors, content script globals, Chrome extension APIs, and network connectivity, providing a detailed health report.
 
-Web chat platforms occasionally update their DOM structure. If messages aren't being detected:
-1. Try **refreshing** the chat tab
-2. Check for extension **updates**
-3. Open an issue on GitHub with the browser console output
+### Extension Updated / Context Invalidated?
 
-### Input text not being replaced?
-
-Some chat platform updates change the input field structure. The extension uses multiple fallback selectors, but if it still fails:
-1. Reload the extension from `chrome://extensions`
-2. Refresh the web chat page
+If you update or reload the extension while chat tabs are open, TransNova displays a **"Please refresh tab (F5) to reconnect"** toast notification. Refreshing the tab restores live messaging interception.
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Here's how you can help:
+Contributions are welcome! To contribute:
 
-1. **Fork** this repository
-2. **Create** a feature branch: `git checkout -b feature/new-platform`
-3. **Commit** your changes: `git commit -m "Add new platform adapter"`
-4. **Push** to the branch: `git push origin feature/new-platform`
-5. **Open** a Pull Request
+1. **Fork** this repository.
+2. **Create** a feature branch: `git checkout -b feature/new-adapter`
+3. **Commit** your changes: `git commit -m "Add adapter for new chat platform"`
+4. **Push** to the branch: `git push origin feature/new-adapter`
+5. **Open** a Pull Request.
 
 ---
 
@@ -251,6 +259,7 @@ This project is licensed under the MIT License — see the [LICENSE](LICENSE) fi
 
 **Developed with ❤️ by Yuvraj Singh**
 
-*TransNova — Breaking language barriers, one chat at a time*
+*TransNova — Breaking language barriers across the web, one chat at a time.*
 
 </div>
+
