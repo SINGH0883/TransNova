@@ -85,24 +85,13 @@
     try {
       chrome.runtime.onMessage.addListener((message) => {
         if (message.type === 'SETTINGS_CHANGED') {
-          const prevReadMode = settings.readMode;
-          const prevEnabled = settings.enabled;
-
           Object.assign(settings, message.settings);
           updateActivationIndicator();
 
-          if (settings.enabled) {
-            const currentReadMode = settings.readMode;
-            if (currentReadMode === 'off' && prevReadMode !== 'off') {
-              restoreAllOriginalMessages();
-            } else if (currentReadMode !== 'off') {
-              if (prevReadMode && prevReadMode !== currentReadMode && prevReadMode !== 'off') {
-                restoreAllOriginalMessages();
-              }
-              setTimeout(processExistingMessages, 200);
-            }
-          } else {
-            restoreAllOriginalMessages();
+          restoreAllOriginalMessages();
+
+          if (settings.enabled && settings.readMode && settings.readMode !== 'off') {
+            setTimeout(processExistingMessages, 50);
           }
         }
       });
@@ -283,17 +272,23 @@
     let fromLang = null;
     let toLang = null;
 
+    const isDevHin = TransNovaTranslator.isDevanagariHindi(text);
+    const isRomHin = TransNovaTranslator.isRomanizedHindi(text);
+    const isHin = isDevHin || isRomHin;
     const isEng = TransNovaTranslator.isEnglish(text);
-    const isHin = TransNovaTranslator.isHindi(text);
 
-    const readMode = settings.readMode || (settings.mode === 'hi-to-en' || settings.mode === 'en-to-hi-send' ? 'off' : settings.mode === 'read-en' ? 'en' : 'hi');
+    const readMode = settings.readMode || 'off';
 
-    if (readMode === 'hi' && isEng) {
-      fromLang = 'en';
-      toLang = 'hi';
-    } else if (readMode === 'en' && isHin) {
-      fromLang = 'hi';
-      toLang = 'en';
+    if (readMode === 'hi') {
+      if (isEng || isRomHin) {
+        fromLang = 'auto';
+        toLang = 'hi';
+      }
+    } else if (readMode === 'en') {
+      if (isHin) {
+        fromLang = 'auto';
+        toLang = 'en';
+      }
     }
 
     if (!fromLang || !toLang) return;
