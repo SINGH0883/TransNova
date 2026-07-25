@@ -35,22 +35,39 @@
     return false;
   }
 
+  let messageObserver = null;
+  let existingMessageInterval = null;
+
+  function stopAllObservers() {
+    if (messageObserver) {
+      try { messageObserver.disconnect(); } catch (e) {}
+      messageObserver = null;
+    }
+    if (existingMessageInterval) {
+      try { clearInterval(existingMessageInterval); } catch (e) {}
+      existingMessageInterval = null;
+    }
+    const indicator = document.querySelector('.transnova-indicator');
+    if (indicator) indicator.remove();
+  }
+
   // ── Safe Service Worker Messaging ────────────────────────────
   async function sendMessageSafe(msg) {
     if (isContextInvalidated) return null;
+
+    if (typeof chrome === 'undefined' || !chrome.runtime || !chrome.runtime.id) {
+      isContextInvalidated = true;
+      stopAllObservers();
+      showReloadToast();
+      return null;
+    }
+
     try {
-      if (typeof chrome === 'undefined' || !chrome.runtime || !chrome.runtime.id) {
-        throw new Error('Extension context invalidated.');
-      }
       return await chrome.runtime.sendMessage(msg);
     } catch (err) {
-      if (err.message && err.message.includes('context invalidated')) {
-        isContextInvalidated = true;
-        console.warn('[TransNova Universal] Extension reloaded/updated. Please refresh tab (F5) to reconnect.');
-        showReloadToast();
-      } else {
-        console.error('[TransNova Universal] Messaging error:', err.message);
-      }
+      isContextInvalidated = true;
+      stopAllObservers();
+      showReloadToast();
       return null;
     }
   }
@@ -187,11 +204,11 @@
         console.log('[TransNova Chat] ✓ Translated in input box:', text, '➔', response.translation);
         await TransNovaPlatforms.setInputText(inputEl, response.translation);
       } else {
-        console.warn('[TransNova Chat] Translation fallback: keeping original text in input');
+        console.log('[TransNova Chat] Translation fallback: keeping original text in input');
       }
     } catch (err) {
       if (inputEl.style) inputEl.style.opacity = '';
-      console.error('[TransNova Chat] Translation error:', err.message);
+      console.log('[TransNova Chat] Translation error:', err.message);
     } finally {
       setTimeout(() => { isTranslatingInput = false; }, 200);
     }
@@ -199,7 +216,10 @@
 
   // ── Universal Message Observer ───────────────────────────────
   function setupUniversalMessageObserver() {
-    const observer = new MutationObserver((mutations) => {
+    if (messageObserver) messageObserver.disconnect();
+    if (existingMessageInterval) clearInterval(existingMessageInterval);
+
+    messageObserver = new MutationObserver((mutations) => {
       if (!settings.enabled || isContextInvalidated) return;
 
       for (const mutation of mutations) {
@@ -212,9 +232,9 @@
     });
 
     const container = document.querySelector(platform.selectors.messageContainer) || document.body;
-    observer.observe(container, { childList: true, subtree: true });
+    messageObserver.observe(container, { childList: true, subtree: true });
 
-    setInterval(processExistingMessages, 1500);
+    existingMessageInterval = setInterval(processExistingMessages, 1500);
   }
 
   function scanForMessages(node) {
