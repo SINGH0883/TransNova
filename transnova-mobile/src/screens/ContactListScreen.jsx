@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, TextInput, Linking, Platform } from 'react-native';
 import { ChatContext } from '../context/ChatContext';
 import { TranslationContext } from '../context/TranslationContext';
 
@@ -16,6 +16,18 @@ export default function ContactListScreen({ onSelectContact, onOpenSettings }) {
   const handleSelect = (id) => {
     setActiveContactId(id);
     onSelectContact(id);
+  };
+
+  const handleOpenKeyboardSettings = () => {
+    if (Platform.OS === 'android') {
+      try {
+        Linking.sendIntent('android.settings.INPUT_METHOD_SETTINGS');
+      } catch (err) {
+        Linking.openSettings();
+      }
+    } else {
+      Linking.openSettings();
+    }
   };
 
   return (
@@ -39,6 +51,22 @@ export default function ContactListScreen({ onSelectContact, onOpenSettings }) {
             value={search}
             onChangeText={setSearch}
           />
+        </View>
+      </View>
+
+      {/* Keyboard Setup Helper Card */}
+      <View style={styles.keyboardCard}>
+        <View style={styles.kbdCardHeader}>
+          <Text style={styles.kbdIcon}>⌨️</Text>
+          <Text style={styles.kbdTitle}>TransNova System Keyboard</Text>
+        </View>
+        <Text style={styles.kbdDesc}>
+          Use TransNova as your main phone keyboard inside native WhatsApp, Telegram, or SMS!
+        </Text>
+        <View style={styles.kbdBtnRow}>
+          <TouchableOpacity style={styles.kbdBtn} onPress={handleOpenKeyboardSettings}>
+            <Text style={styles.kbdBtnText}>1. Enable TransNova Keyboard</Text>
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -134,6 +162,50 @@ const styles = StyleSheet.create({
     flex: 1,
     color: '#F8FAFC',
     fontSize: 14,
+  },
+  keyboardCard: {
+    backgroundColor: '#1E293B',
+    marginHorizontal: 14,
+    marginTop: 12,
+    marginBottom: 6,
+    borderRadius: 14,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#38BDF8',
+  },
+  kbdCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  kbdIcon: {
+    fontSize: 16,
+    marginRight: 6,
+  },
+  kbdTitle: {
+    color: '#38BDF8',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  kbdDesc: {
+    color: '#94A3B8',
+    fontSize: 12,
+    lineHeight: 16,
+    marginBottom: 10,
+  },
+  kbdBtnRow: {
+    flexDirection: 'row',
+  },
+  kbdBtn: {
+    backgroundColor: '#2563EB',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 10,
+  },
+  kbdBtnText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '700',
   },
   contactCard: {
     flexDirection: 'row',
