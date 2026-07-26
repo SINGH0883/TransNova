@@ -1,6 +1,5 @@
 package com.singh0883.transnovamobile
 
-import android.view.View
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactApplicationContext
@@ -11,7 +10,7 @@ class KeyboardPackage : ReactPackage {
         return listOf(KeyboardModule(reactContext))
     }
 
-    override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<View, *>> {
+    override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
         return emptyList()
     }
 }
