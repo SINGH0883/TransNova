@@ -2,15 +2,15 @@ package com.singh0883.transnovamobile
 
 import android.graphics.Color
 import android.inputmethodservice.InputMethodService
+import android.os.Handler
+import android.os.Looper
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.LinearLayout
-import android.widget.ScrollView
 import android.widget.TextView
-import kotlinx.coroutines.*
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
@@ -18,7 +18,7 @@ import org.json.JSONArray
 
 class TransNovaKeyboardService : InputMethodService() {
 
-    private val serviceScope = CoroutineScope(Dispatchers.Main + Job())
+    private val mainHandler = Handler(Looper.getMainLooper())
     private var currentMode = "HI_TO_EN" // "HI_TO_EN" or "EN_TO_HI"
     private var currentKeyboardMode = "QWERTY" // "QWERTY", "DEVANAGARI", "SYMBOLS"
 
@@ -90,8 +90,12 @@ class TransNovaKeyboardService : InputMethodService() {
                 80
             )
             setOnClickListener {
-                val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.showInputMethodPicker()
+                try {
+                    val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.showInputMethodPicker()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
         }
 
@@ -328,7 +332,7 @@ class TransNovaKeyboardService : InputMethodService() {
 
         statusText.text = "🌐 Translating..."
 
-        serviceScope.launch(Dispatchers.IO) {
+        Thread {
             try {
                 val encoded = URLEncoder.encode(textBefore.trim(), "UTF-8")
                 val apiUrl = "https://translate.googleapis.com/translate_a/single?client=gtx&dt=t&sl=$sourceLang&tl=$targetLang&q=$encoded"
@@ -349,25 +353,24 @@ class TransNovaKeyboardService : InputMethodService() {
                     }
                     val translatedText = sb.toString()
 
-                    withContext(Dispatchers.Main) {
+                    mainHandler.post {
                         if (translatedText.isNotBlank()) {
                             inputConn.deleteSurroundingText(textBefore.length, 0)
                             inputConn.commitText(translatedText, 1)
                             statusText.text = if (currentMode == "HI_TO_EN") "🌐 TransNova (HI ➔ EN)" else "🌐 TransNova (EN ➔ HI)"
                         }
                     }
+                } else {
+                    mainHandler.post {
+                        statusText.text = "🌐 TransNova Ready"
+                    }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                withContext(Dispatchers.Main) {
+                mainHandler.post {
                     statusText.text = "🌐 TransNova Ready"
                 }
             }
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        serviceScope.cancel()
+        }.start()
     }
 }
