@@ -19,21 +19,21 @@ export default function MessageInputBar({ onOpenSettings }) {
 
   return (
     <View style={styles.container}>
-      {/* Dynamic Mode Helper Strip */}
+      {/* Live Hinglish / Devanagari Detection Indicator */}
       {input.trim().length > 0 && isHinglish && (
         <View style={styles.hintStrip}>
           <Text style={styles.hintText}>
-            🇮🇳 Hinglish/Hindi detected {sendMode ? '→ Will send translated in English 🇬🇧' : '(Send Translation Off)'}
+            🇮🇳 Hinglish / Hindi Detected {sendMode ? '→ Auto-translating to English 🇬🇧' : '(Raw Mode)'}
           </Text>
         </View>
       )}
 
       <View style={styles.inputRow}>
-        {/* Toggle Send Mode Pill */}
+        {/* Quick Toggle Send Mode Pill */}
         <TouchableOpacity
           style={[styles.modePill, sendMode ? styles.modePillActive : styles.modePillInactive]}
           onPress={() => setSendMode(!sendMode)}
-          activeOpacity={0.7}
+          activeOpacity={0.8}
         >
           <Text style={styles.pillIcon}>🌐</Text>
           <Text style={[styles.pillText, sendMode ? styles.pillTextActive : styles.pillTextInactive]}>
@@ -41,7 +41,7 @@ export default function MessageInputBar({ onOpenSettings }) {
           </Text>
         </TouchableOpacity>
 
-        {/* Text Input */}
+        {/* Text Input Box */}
         <TextInput
           style={styles.textInput}
           placeholder={sendMode ? "Type in Hindi / Hinglish..." : "Type a message..."}
@@ -51,11 +51,12 @@ export default function MessageInputBar({ onOpenSettings }) {
           multiline
         />
 
-        {/* Send Button */}
+        {/* Action Send Button */}
         <TouchableOpacity
           style={[styles.sendButton, !input.trim() && styles.sendButtonDisabled]}
           onPress={handleSend}
           disabled={!input.trim()}
+          activeOpacity={0.8}
         >
           <Text style={styles.sendIcon}>➔</Text>
         </TouchableOpacity>
@@ -66,25 +67,25 @@ export default function MessageInputBar({ onOpenSettings }) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#0F172A',
+    backgroundColor: '#0B132B',
     borderTopWidth: 1,
-    borderTopColor: '#1E293B',
+    borderTopColor: 'rgba(56, 189, 248, 0.15)',
     paddingHorizontal: 12,
     paddingVertical: 10,
   },
   hintStrip: {
     backgroundColor: 'rgba(56, 189, 248, 0.12)',
     paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
+    paddingVertical: 7,
+    borderRadius: 10,
     marginBottom: 8,
-    borderLeftWidth: 3,
+    borderLeftWidth: 3.5,
     borderLeftColor: '#38BDF8',
   },
   hintText: {
     color: '#38BDF8',
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   inputRow: {
     flexDirection: 'row',
@@ -93,13 +94,13 @@ const styles = StyleSheet.create({
   modePill: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 8,
+    paddingHorizontal: 11,
+    paddingVertical: 9,
     borderRadius: 20,
     marginRight: 8,
   },
   modePillActive: {
-    backgroundColor: '#1E293B',
+    backgroundColor: 'rgba(56, 189, 248, 0.15)',
     borderWidth: 1,
     borderColor: '#38BDF8',
   },
@@ -113,8 +114,9 @@ const styles = StyleSheet.create({
     marginRight: 4,
   },
   pillText: {
-    fontSize: 11,
-    fontWeight: '800',
+    fontSize: 11.5,
+    fontWeight: '900',
+    letterSpacing: 0.3,
   },
   pillTextActive: {
     color: '#38BDF8',
@@ -131,19 +133,26 @@ const styles = StyleSheet.create({
     color: '#F8FAFC',
     fontSize: 15,
     maxHeight: 100,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.05)',
   },
   sendButton: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     backgroundColor: '#2563EB',
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: 8,
+    elevation: 3,
+    shadowColor: '#2563EB',
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
   },
   sendButtonDisabled: {
     backgroundColor: '#334155',
-    opacity: 0.6,
+    opacity: 0.5,
+    elevation: 0,
   },
   sendIcon: {
     color: '#FFFFFF',

@@ -10,30 +10,34 @@ export default function HeaderBar({ onOpenSettings, onBack }) {
   return (
     <View style={styles.headerContainer}>
       <View style={styles.leftSection}>
-        <TouchableOpacity style={styles.backButton} onPress={onBack}>
+        <TouchableOpacity style={styles.backButton} onPress={onBack} activeOpacity={0.7}>
           <Text style={styles.backText}>‹</Text>
         </TouchableOpacity>
-        <Image source={{ uri: activeContact.avatar }} style={styles.avatar} />
+
+        <View style={styles.avatarWrapper}>
+          <Image source={{ uri: activeContact.avatar }} style={styles.avatar} />
+          {activeContact.status === 'Online' && <View style={styles.activeDot} />}
+        </View>
+
         <View style={styles.contactInfo}>
           <Text style={styles.nameText} numberOfLines={1}>{activeContact.name}</Text>
-          <View style={styles.statusRow}>
-            <View style={styles.statusDot} />
-            <Text style={styles.statusText}>{activeContact.status}</Text>
-          </View>
+          <Text style={styles.statusSubtext}>
+            {activeContact.status === 'Online' ? '● Active Now' : activeContact.status}
+          </Text>
         </View>
       </View>
 
       <View style={styles.rightSection}>
-        {/* Floating TransNova Status Pill */}
-        <TouchableOpacity style={styles.statusBadge} onPress={onOpenSettings}>
-          <Text style={styles.badgeGlobe}>🌐</Text>
+        {/* Floating Glassmorphic TransNova Mode Pill */}
+        <TouchableOpacity style={styles.statusBadge} onPress={onOpenSettings} activeOpacity={0.8}>
+          <Image source={require('../../assets/icon.png')} style={styles.logoBadgeIcon} />
           <Text style={styles.badgeText}>
-            {sendMode ? 'EN' : 'HI'} | {readMode ? 'HI' : 'EN'}
+            {sendMode ? 'EN' : 'HI'} ↔ {readMode ? 'HI' : 'EN'}
           </Text>
         </TouchableOpacity>
 
-        {/* Settings Button */}
-        <TouchableOpacity style={styles.iconButton} onPress={onOpenSettings}>
+        {/* Settings Control Button */}
+        <TouchableOpacity style={styles.iconButton} onPress={onOpenSettings} activeOpacity={0.7}>
           <Text style={styles.gearIcon}>⚙️</Text>
         </TouchableOpacity>
       </View>
@@ -43,18 +47,18 @@ export default function HeaderBar({ onOpenSettings, onBack }) {
 
 const styles = StyleSheet.create({
   headerContainer: {
-    height: 64,
-    backgroundColor: '#0F172A',
+    height: 68,
+    backgroundColor: '#0B132B',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#1E293B',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
+    borderBottomColor: 'rgba(56, 189, 248, 0.15)',
+    elevation: 8,
+    shadowColor: '#38BDF8',
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
   },
   leftSection: {
     flexDirection: 'row',
@@ -62,21 +66,37 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   backButton: {
-    marginRight: 8,
+    marginRight: 6,
     paddingHorizontal: 6,
-    paddingVertical: 2,
+    paddingVertical: 4,
   },
   backText: {
-    color: '#94A3B8',
-    fontSize: 28,
+    color: '#38BDF8',
+    fontSize: 32,
     fontWeight: '300',
-    lineHeight: 28,
+    lineHeight: 32,
+  },
+  avatarWrapper: {
+    position: 'relative',
   },
   avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#334155',
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    borderWidth: 1.5,
+    borderColor: '#38BDF8',
+    backgroundColor: '#1E293B',
+  },
+  activeDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#10B981',
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    borderWidth: 2,
+    borderColor: '#0B132B',
   },
   contactInfo: {
     marginLeft: 10,
@@ -87,22 +107,13 @@ const styles = StyleSheet.create({
     color: '#F8FAFC',
     fontSize: 16,
     fontWeight: '700',
+    letterSpacing: 0.2,
   },
-  statusRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 2,
-  },
-  statusDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#10B981',
-    marginRight: 5,
-  },
-  statusText: {
-    color: '#94A3B8',
+  statusSubtext: {
+    color: '#10B981',
     fontSize: 12,
+    fontWeight: '500',
+    marginTop: 1,
   },
   rightSection: {
     flexDirection: 'row',
@@ -111,28 +122,33 @@ const styles = StyleSheet.create({
   statusBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1E293B',
-    paddingHorizontal: 9,
-    paddingVertical: 5,
-    borderRadius: 14,
+    backgroundColor: 'rgba(56, 189, 248, 0.12)',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#38BDF8',
+    borderColor: 'rgba(56, 189, 248, 0.4)',
     marginRight: 8,
   },
-  badgeGlobe: {
-    fontSize: 12,
-    marginRight: 4,
+  logoBadgeIcon: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    marginRight: 6,
   },
   badgeText: {
     color: '#38BDF8',
-    fontSize: 11,
-    fontWeight: '700',
+    fontSize: 12,
+    fontWeight: '800',
+    letterSpacing: 0.4,
   },
   iconButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#1E293B',
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: 'rgba(30, 41, 59, 0.8)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
     alignItems: 'center',
     justifyContent: 'center',
   },

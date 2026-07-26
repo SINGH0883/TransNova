@@ -14,12 +14,12 @@ export default function MessageBubble({ message }) {
     <View style={[styles.container, isMe ? styles.myContainer : styles.theirContainer]}>
       <View style={[styles.bubble, isMe ? styles.myBubble : styles.theirBubble]}>
         
-        {/* Loading Spinner */}
+        {/* Loading Translation State */}
         {message.loading ? (
           <View style={styles.loadingRow}>
             <ActivityIndicator size="small" color={isMe ? '#FFFFFF' : '#38BDF8'} />
             <Text style={[styles.loadingText, isMe ? styles.myText : styles.theirText]}>
-              Translating...
+              TransNova Translating...
             </Text>
           </View>
         ) : (
@@ -31,7 +31,7 @@ export default function MessageBubble({ message }) {
         {/* Message Footer: Timestamp + TransNova Interactive Badge */}
         <View style={styles.footerRow}>
           <Text style={[styles.timeText, isMe ? styles.myTime : styles.theirTime]}>
-            {message.timestamp}
+            {message.timestamp} {isMe ? '✓✓' : ''}
           </Text>
 
           {message.isTranslated && !message.loading && (
@@ -41,7 +41,7 @@ export default function MessageBubble({ message }) {
                 message.showOriginal && styles.activeBadgeButton
               ]}
               onPress={() => toggleMessageBadge(message.id)}
-              activeOpacity={0.7}
+              activeOpacity={0.75}
             >
               <Text style={styles.badgeIcon}>🌐</Text>
               <Text style={[
@@ -72,15 +72,15 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   bubble: {
-    maxWidth: '82%',
-    paddingHorizontal: 14,
+    maxWidth: '84%',
+    paddingHorizontal: 15,
     paddingTop: 10,
-    paddingBottom: 6,
+    paddingBottom: 7,
     borderRadius: 18,
-    elevation: 2,
+    elevation: 3,
     shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
+    shadowOpacity: 0.18,
+    shadowRadius: 4,
   },
   myBubble: {
     backgroundColor: '#2563EB',
@@ -90,17 +90,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#1E293B',
     borderBottomLeftRadius: 4,
     borderWidth: 1,
-    borderColor: '#334155',
+    borderColor: 'rgba(56, 189, 248, 0.15)',
   },
   messageText: {
     fontSize: 15,
-    lineHeight: 21,
+    lineHeight: 21.5,
+    letterSpacing: 0.15,
   },
   myText: {
     color: '#FFFFFF',
+    fontWeight: '400',
   },
   theirText: {
-    color: '#F1F5F9',
+    color: '#F8FAFC',
+    fontWeight: '400',
   },
   loadingRow: {
     flexDirection: 'row',
@@ -108,7 +111,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   loadingText: {
-    fontSize: 14,
+    fontSize: 13.5,
     fontStyle: 'italic',
     marginLeft: 8,
   },
@@ -120,8 +123,8 @@ const styles = StyleSheet.create({
     minWidth: 90,
   },
   timeText: {
-    fontSize: 10,
-    fontWeight: '500',
+    fontSize: 10.5,
+    fontWeight: '600',
   },
   myTime: {
     color: '#93C5FD',
@@ -132,22 +135,25 @@ const styles = StyleSheet.create({
   badgeButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(15, 23, 42, 0.4)',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
+    backgroundColor: 'rgba(15, 23, 42, 0.45)',
+    paddingHorizontal: 7,
+    paddingVertical: 2.5,
     borderRadius: 10,
     marginLeft: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(56, 189, 248, 0.25)',
   },
   activeBadgeButton: {
     backgroundColor: 'rgba(245, 158, 11, 0.25)',
+    borderColor: 'rgba(245, 158, 11, 0.4)',
   },
   badgeIcon: {
     fontSize: 10,
     marginRight: 3,
   },
   badgeLabel: {
-    fontSize: 9,
-    fontWeight: '700',
+    fontSize: 9.5,
+    fontWeight: '800',
   },
   badgeLabelTranslated: {
     color: '#38BDF8',

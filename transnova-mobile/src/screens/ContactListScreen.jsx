@@ -32,43 +32,51 @@ export default function ContactListScreen({ onSelectContact, onOpenSettings }) {
 
   return (
     <View style={styles.container}>
-      {/* Top Header */}
+      {/* Top Header Bar */}
       <View style={styles.header}>
         <View style={styles.titleRow}>
-          <Text style={styles.logoText}>TransNova Mobile</Text>
-          <TouchableOpacity style={styles.badge} onPress={onOpenSettings}>
-            <Text style={styles.badgeText}>🌐 {sendMode ? 'EN' : 'HI'} | {readMode ? 'HI' : 'EN'}</Text>
+          <View style={styles.brandGroup}>
+            <Image source={require('../../assets/icon.png')} style={styles.appLogo} />
+            <Text style={styles.logoText}>TransNova</Text>
+          </View>
+          <TouchableOpacity style={styles.badge} onPress={onOpenSettings} activeOpacity={0.8}>
+            <Text style={styles.badgeText}>🌐 {sendMode ? 'EN' : 'HI'} ↔ {readMode ? 'HI' : 'EN'}</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Search Bar */}
+        {/* Search Input Bar */}
         <View style={styles.searchBox}>
           <Text style={styles.searchIcon}>🔍</Text>
           <TextInput
             style={styles.searchInput}
-            placeholder="Search messages or contacts..."
+            placeholder="Search contacts or translated chats..."
             placeholderTextColor="#64748B"
             value={search}
             onChangeText={setSearch}
           />
+          {search.length > 0 && (
+            <TouchableOpacity onPress={() => setSearch('')}>
+              <Text style={styles.clearSearch}>✕</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
 
-      {/* Keyboard Setup Helper Card */}
+      {/* Glassmorphic Keyboard Launcher Card */}
       <View style={styles.keyboardCard}>
         <View style={styles.kbdCardHeader}>
           <Text style={styles.kbdIcon}>⌨️</Text>
-          <Text style={styles.kbdTitle}>TransNova System Keyboard</Text>
+          <Text style={styles.kbdTitle}>TransNova System Mobile Keyboard</Text>
         </View>
         <Text style={styles.kbdDesc}>
-          Use TransNova as your main phone keyboard inside native WhatsApp, Telegram, or SMS!
+          Type Hinglish in WhatsApp, Telegram, or SMS and translate live inside any app!
         </Text>
-        <View style={styles.kbdBtnRow}>
-          <TouchableOpacity style={styles.kbdBtn} onPress={handleOpenKeyboardSettings}>
-            <Text style={styles.kbdBtnText}>1. Enable TransNova Keyboard</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity style={styles.kbdBtn} onPress={handleOpenKeyboardSettings} activeOpacity={0.85}>
+          <Text style={styles.kbdBtnText}>1. Enable TransNova Keyboard in Android Settings ➔</Text>
+        </TouchableOpacity>
       </View>
+
+      <Text style={styles.sectionTitle}>CONVERSATIONS</Text>
 
       {/* Contact List */}
       <FlatList
@@ -112,15 +120,15 @@ export default function ContactListScreen({ onSelectContact, onOpenSettings }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#090D16',
   },
   header: {
     paddingTop: 16,
     paddingHorizontal: 16,
-    paddingBottom: 12,
-    backgroundColor: '#0F172A',
+    paddingBottom: 14,
+    backgroundColor: '#0B132B',
     borderBottomWidth: 1,
-    borderBottomColor: '#1E293B',
+    borderBottomColor: 'rgba(56, 189, 248, 0.15)',
   },
   titleRow: {
     flexDirection: 'row',
@@ -128,31 +136,44 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 12,
   },
+  brandGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  appLogo: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    marginRight: 10,
+  },
   logoText: {
     fontSize: 22,
-    fontWeight: '800',
+    fontWeight: '900',
     color: '#38BDF8',
+    letterSpacing: 0.5,
   },
   badge: {
-    backgroundColor: '#1E293B',
+    backgroundColor: 'rgba(56, 189, 248, 0.12)',
     paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 14,
+    paddingVertical: 6,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#38BDF8',
+    borderColor: 'rgba(56, 189, 248, 0.4)',
   },
   badgeText: {
     color: '#38BDF8',
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   searchBox: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#1E293B',
-    borderRadius: 12,
+    borderRadius: 14,
     paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingVertical: 9,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.05)',
   },
   searchIcon: {
     fontSize: 14,
@@ -163,15 +184,24 @@ const styles = StyleSheet.create({
     color: '#F8FAFC',
     fontSize: 14,
   },
+  clearSearch: {
+    color: '#94A3B8',
+    fontSize: 14,
+    paddingHorizontal: 4,
+  },
   keyboardCard: {
-    backgroundColor: '#1E293B',
+    backgroundColor: 'rgba(30, 41, 59, 0.7)',
     marginHorizontal: 14,
-    marginTop: 12,
+    marginTop: 14,
     marginBottom: 6,
-    borderRadius: 14,
-    padding: 12,
+    borderRadius: 16,
+    padding: 14,
     borderWidth: 1,
     borderColor: '#38BDF8',
+    elevation: 4,
+    shadowColor: '#38BDF8',
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
   },
   kbdCardHeader: {
     flexDirection: 'row',
@@ -179,40 +209,47 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   kbdIcon: {
-    fontSize: 16,
-    marginRight: 6,
+    fontSize: 18,
+    marginRight: 8,
   },
   kbdTitle: {
     color: '#38BDF8',
-    fontSize: 14,
-    fontWeight: '700',
+    fontSize: 15,
+    fontWeight: '800',
   },
   kbdDesc: {
     color: '#94A3B8',
-    fontSize: 12,
-    lineHeight: 16,
-    marginBottom: 10,
-  },
-  kbdBtnRow: {
-    flexDirection: 'row',
+    fontSize: 12.5,
+    lineHeight: 17,
+    marginBottom: 12,
   },
   kbdBtn: {
     backgroundColor: '#2563EB',
     paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 10,
+    paddingVertical: 10,
+    borderRadius: 12,
+    alignItems: 'center',
   },
   kbdBtnText: {
     color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '700',
+    fontSize: 12.5,
+    fontWeight: '800',
+  },
+  sectionTitle: {
+    color: '#64748B',
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 1.2,
+    marginLeft: 16,
+    marginTop: 14,
+    marginBottom: 6,
   },
   contactCard: {
     flexDirection: 'row',
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#1E293B',
+    borderBottomColor: 'rgba(30, 41, 59, 0.5)',
     alignItems: 'center',
   },
   avatarWrapper: {
@@ -223,6 +260,8 @@ const styles = StyleSheet.create({
     height: 48,
     borderRadius: 24,
     backgroundColor: '#334155',
+    borderWidth: 1,
+    borderColor: 'rgba(56, 189, 248, 0.3)',
   },
   onlineDot: {
     width: 12,
@@ -233,7 +272,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 0,
     borderWidth: 2,
-    borderColor: '#0F172A',
+    borderColor: '#090D16',
   },
   cardContent: {
     flex: 1,
@@ -274,6 +313,6 @@ const styles = StyleSheet.create({
   unreadText: {
     color: '#FFFFFF',
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: '800',
   },
 });
