@@ -8,7 +8,7 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 
-class KeyboardModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
+class KeyboardModule(private val reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
 
     override fun getName(): String {
         return "KeyboardModule"
@@ -17,10 +17,9 @@ class KeyboardModule(reactContext: ReactApplicationContext) : ReactContextBaseJa
     @ReactMethod
     fun openKeyboardSettings() {
         try {
-            val intent = Intent(Settings.ACTION_INPUT_METHOD_SETTINGS).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-            reactApplicationContext.startActivity(intent)
+            val intent = Intent(Settings.ACTION_INPUT_METHOD_SETTINGS)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            reactContext.startActivity(intent)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -29,12 +28,12 @@ class KeyboardModule(reactContext: ReactApplicationContext) : ReactContextBaseJa
     @ReactMethod
     fun openInputMethodPicker() {
         try {
-            val currentActivity = currentActivity
-            if (currentActivity != null) {
-                val imm = currentActivity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            val activity = currentActivity
+            if (activity != null) {
+                val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.showInputMethodPicker()
             } else {
-                val imm = reactApplicationContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                val imm = reactContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.showInputMethodPicker()
             }
         } catch (e: Exception) {
