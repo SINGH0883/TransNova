@@ -16,15 +16,29 @@ class KeyboardModule(reactContext: ReactApplicationContext) : ReactContextBaseJa
 
     @ReactMethod
     fun openKeyboardSettings() {
-        val intent = Intent(Settings.ACTION_INPUT_METHOD_SETTINGS).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        try {
+            val intent = Intent(Settings.ACTION_INPUT_METHOD_SETTINGS).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            reactApplicationContext.startActivity(intent)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
-        reactApplicationContext.startActivity(intent)
     }
 
     @ReactMethod
     fun openInputMethodPicker() {
-        val imm = reactApplicationContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.showInputMethodPicker()
+        try {
+            val currentActivity = currentActivity
+            if (currentActivity != null) {
+                val imm = currentActivity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.showInputMethodPicker()
+            } else {
+                val imm = reactApplicationContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.showInputMethodPicker()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 }
