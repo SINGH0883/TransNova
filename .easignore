@@ -1,0 +1,14 @@
+node_modules/
+.expo/
+dist/
+web-build/
+android/.gradle/
+android/app/build/
+android/build/
+transnova-mobile/node_modules/
+transnova-mobile/.expo/
+transnova-mobile/dist/
+transnova-mobile/web-build/
+transnova-mobile/android/.gradle/
+transnova-mobile/android/app/build/
+transnova-mobile/android/build/
