@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react'
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { TranslationContext } from '../context/TranslationContext';
 import { ChatContext } from '../context/ChatContext';
 
