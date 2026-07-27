@@ -1,7 +1,5 @@
 /**
- * TransNova — Popup Controller
- * Controls settings, 10,000 daily character quota meter,
- * mode switching, and real-time connection status.
+ * TransNova — Universal Multi-Language Popup Controller
  */
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -9,36 +7,31 @@ document.addEventListener('DOMContentLoaded', async () => {
   const enabledToggle = document.getElementById('enabledToggle');
   const toggleHint = document.getElementById('toggleHint');
   const statusBadge = document.getElementById('statusBadge');
+  const myLanguageSelect = document.getElementById('myLanguageSelect');
+  const partnerLanguageSelect = document.getElementById('partnerLanguageSelect');
   const sendModeSelect = document.getElementById('sendModeSelect');
   const readModeSelect = document.getElementById('readModeSelect');
   const sendModeBadge = document.getElementById('sendModeBadge');
   const readModeBadge = document.getElementById('readModeBadge');
+  const sendTranslateOption = document.getElementById('sendTranslateOption');
+  const readTranslateOption = document.getElementById('readTranslateOption');
   const platformName = document.getElementById('platformName');
   const popupContainer = document.querySelector('.popup-container');
+  const swapModesBtn = document.getElementById('swapModesBtn');
 
-  const sendLabels = {
-    en: 'Send English',
-    hi: 'Send Hindi',
-    off: 'Outgoing Off',
-  };
-
-  const readLabels = {
-    hi: 'Read Hindi',
-    en: 'Read English',
-    off: 'Incoming Off',
+  const LANG_NAMES = {
+    en: 'English', hi: 'Hindi', es: 'Spanish', fr: 'French', de: 'German',
+    'zh-CN': 'Chinese', ja: 'Japanese', ar: 'Arabic', pt: 'Portuguese',
+    ru: 'Russian', ko: 'Korean', it: 'Italian', tr: 'Turkish', nl: 'Dutch',
+    pl: 'Polish', vi: 'Vietnamese', th: 'Thai', id: 'Indonesian', bn: 'Bengali',
+    pa: 'Punjabi', gu: 'Gujarati', ta: 'Tamil', te: 'Telugu', mr: 'Marathi',
+    ur: 'Urdu', fa: 'Persian', he: 'Hebrew', sv: 'Swedish', uk: 'Ukrainian', el: 'Greek'
   };
 
   const CHAT_HOSTNAMES = [
-    'web.whatsapp.com',
-    'web.telegram.org',
-    'telegram.org',
-    'discord.com',
-    'app.slack.com',
-    'slack.com',
-    'messenger.com',
-    'facebook.com',
-    'web.snapchat.com',
-    'snapchat.com',
+    'web.whatsapp.com', 'web.telegram.org', 'telegram.org', 'discord.com',
+    'app.slack.com', 'slack.com', 'messenger.com', 'facebook.com',
+    'web.snapchat.com', 'snapchat.com',
   ];
 
   // ── Load Current Settings ──────────────────────────────────
@@ -49,43 +42,71 @@ document.addEventListener('DOMContentLoaded', async () => {
         enabledToggle.checked = response.enabled !== false;
         updateEnabledUI(enabledToggle.checked);
 
-        const sendMode = response.sendMode !== undefined ? response.sendMode : 'off';
-        const readMode = response.readMode !== undefined ? response.readMode : 'off';
+        let myLang = response.myLanguage || 'en';
+        let partnerLang = response.partnerLanguage || 'es';
+        let sendMode = response.sendMode !== undefined ? response.sendMode : 'off';
+        let readMode = response.readMode !== undefined ? response.readMode : 'off';
 
-        sendModeSelect.value = sendMode;
-        readModeSelect.value = readMode;
+        // Legacy compatibility
+        if (sendMode === 'en') { myLang = 'hi'; partnerLang = 'en'; sendMode = 'translate'; }
+        else if (sendMode === 'hi') { myLang = 'en'; partnerLang = 'hi'; sendMode = 'translate'; }
 
-        updateBadges(sendMode, readMode);
+        if (readMode === 'en') { myLang = 'hi'; partnerLang = 'en'; readMode = 'translate'; }
+        else if (readMode === 'hi') { myLang = 'en'; partnerLang = 'hi'; readMode = 'translate'; }
+
+        if (myLanguageSelect) myLanguageSelect.value = myLang;
+        if (partnerLanguageSelect) partnerLanguageSelect.value = partnerLang;
+
+        sendModeSelect.value = sendMode === 'off' ? 'off' : 'translate';
+        readModeSelect.value = readMode === 'off' ? 'off' : 'translate';
+
+        updateDynamicLabels();
       }
     } catch (e) {
       console.warn('[TransNova Popup] Could not load settings:', e);
     }
   }
 
-  function updateBadges(sendMode, readMode) {
-    if (sendModeBadge) sendModeBadge.textContent = sendLabels[sendMode] || 'Send English';
-    if (readModeBadge) readModeBadge.textContent = readLabels[readMode] || 'Read Hindi';
-  }
+  function updateDynamicLabels() {
+    const myLang = myLanguageSelect ? myLanguageSelect.value : 'en';
+    const partnerLang = partnerLanguageSelect ? partnerLanguageSelect.value : 'es';
+    const myName = LANG_NAMES[myLang] || myLang.toUpperCase();
+    const partnerName = LANG_NAMES[partnerLang] || partnerLang.toUpperCase();
 
-  async function saveSettings() {
+    if (sendTranslateOption) {
+      sendTranslateOption.textContent = `🌐 Type in ${myName} ➔ Send in ${partnerName}`;
+    }
+    if (readTranslateOption) {
+      readTranslateOption.textContent = `🌐 Auto-Detect Incoming ➔ View in ${myName}`;
+    }
+
     const sendMode = sendModeSelect.value;
     const readMode = readModeSelect.value;
 
-    updateBadges(sendMode, readMode);
+    if (sendModeBadge) {
+      sendModeBadge.textContent = sendMode === 'translate' ? `Send ${partnerName}` : 'Outgoing Off';
+    }
+    if (readModeBadge) {
+      readModeBadge.textContent = readMode === 'translate' ? `Read in ${myName}` : 'Incoming Off';
+    }
+  }
 
-    let mode = 'both';
-    if (sendMode === 'en' && readMode === 'off') mode = 'hi-to-en';
-    else if (sendMode === 'hi' && readMode === 'off') mode = 'en-to-hi-send';
-    else if (sendMode === 'off' && readMode === 'hi') mode = 'en-to-hi';
-    else if (sendMode === 'off' && readMode === 'en') mode = 'read-en';
-    else if (sendMode === 'off' && readMode === 'off') mode = 'off';
+  async function saveSettings() {
+    const myLanguage = myLanguageSelect ? myLanguageSelect.value : 'en';
+    const partnerLanguage = partnerLanguageSelect ? partnerLanguageSelect.value : 'es';
+    const sendMode = sendModeSelect.value;
+    const readMode = readModeSelect.value;
+
+    updateDynamicLabels();
 
     await chrome.runtime.sendMessage({
       type: 'UPDATE_SETTINGS',
       settings: {
+        myLanguage,
+        partnerLanguage,
         sendMode,
         readMode,
-        mode,
+        mode: sendMode === 'translate' || readMode === 'translate' ? 'both' : 'off',
       },
     });
   }
@@ -135,16 +156,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
-  const swapModesBtn = document.getElementById('swapModesBtn');
-
+  if (myLanguageSelect) myLanguageSelect.addEventListener('change', saveSettings);
+  if (partnerLanguageSelect) partnerLanguageSelect.addEventListener('change', saveSettings);
   sendModeSelect.addEventListener('change', saveSettings);
   readModeSelect.addEventListener('change', saveSettings);
 
   if (swapModesBtn) {
     swapModesBtn.addEventListener('click', async () => {
-      const temp = sendModeSelect.value;
-      sendModeSelect.value = readModeSelect.value;
-      readModeSelect.value = temp;
+      const temp = myLanguageSelect.value;
+      myLanguageSelect.value = partnerLanguageSelect.value;
+      partnerLanguageSelect.value = temp;
 
       const icon = swapModesBtn.querySelector('.swap-icon');
       if (icon) {

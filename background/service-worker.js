@@ -7,9 +7,11 @@
 // ── Default Settings ─────────────────────────────────────────
 const DEFAULT_SETTINGS = {
   enabled: true,
-  mode: 'off',
+  myLanguage: 'en',
+  partnerLanguage: 'es',
   sendMode: 'off',
   readMode: 'off',
+  mode: 'off',
 };
 
 chrome.runtime.onInstalled.addListener(async () => {
@@ -21,22 +23,20 @@ chrome.runtime.onInstalled.addListener(async () => {
 
 // ── Translation Cache ────────────────────────────────────────
 const translationCache = new Map();
-const CACHE_MAX = 300;
+const CACHE_MAX = 500;
 
 function getCacheKey(text, from, to) {
   return `${from}|${to}|${text.trim().toLowerCase()}`;
 }
 
 // ── Google Translate (Free) ──────────────────────────────────
-// Uses the same endpoint as Google Translate web — supports
-// auto-detection and handles Romanized Hindi perfectly.
 const GOOGLE_URL = 'https://translate.googleapis.com/translate_a/single';
 
 async function translateViaGoogle(text, from, to) {
   try {
     const params = new URLSearchParams({
       client: 'gtx',
-      sl: from === 'auto' ? 'auto' : from,
+      sl: !from || from === 'auto' ? 'auto' : from,
       tl: to,
       dt: 't',
       q: text.trim(),
@@ -47,14 +47,13 @@ async function translateViaGoogle(text, from, to) {
 
     const data = await response.json();
 
-    // Response format: [[["translated text","source text",...],...],...,"detected_lang"]
     if (data && data[0]) {
       let translated = '';
       for (const segment of data[0]) {
         if (segment[0]) translated += segment[0];
       }
       if (translated.trim()) {
-        console.log(`[TransNova SW] Google translated: "${text}" → "${translated}"`);
+        console.log(`[TransNova SW] Google translated: "${text}" (${from || 'auto'} → ${to}) → "${translated}"`);
         return translated.trim();
       }
     }
@@ -72,7 +71,7 @@ async function translateViaMyMemory(text, from, to) {
   try {
     const params = new URLSearchParams({
       q: text.trim(),
-      langpair: `${from}|${to}`,
+      langpair: `${!from || from === 'auto' ? 'autodetect' : from}|${to}`,
     });
 
     const response = await fetch(`${MYMEMORY_URL}?${params.toString()}`);
@@ -93,7 +92,8 @@ async function translateViaMyMemory(text, from, to) {
 
 // ── Main Translation Function ────────────────────────────────
 async function translateText(text, from, to) {
-  const key = getCacheKey(text, from, to);
+  if (!text || !text.trim()) return text;
+  const key = getCacheKey(text, from || 'auto', to);
 
   // Check cache
   if (translationCache.has(key)) {
@@ -101,12 +101,8 @@ async function translateText(text, from, to) {
     return translationCache.get(key);
   }
 
-  // Use auto-detect for source language — this handles
-  // both Devanagari Hindi and Romanized Hindi (Hinglish)
-  const effectiveFrom = 'auto';
-
-  // Try Google Translate first (handles Romanized Hindi well)
-  let translation = await translateViaGoogle(text, effectiveFrom, to);
+  // Try Google Translate first (handles 100+ languages & auto-detection)
+  let translation = await translateViaGoogle(text, from, to);
 
   // Fallback to MyMemory if Google fails
   if (!translation) {
@@ -114,7 +110,6 @@ async function translateText(text, from, to) {
   }
 
   if (translation && translation.trim().toLowerCase() !== text.trim().toLowerCase()) {
-    // Cache successful translation
     if (translationCache.size >= CACHE_MAX) {
       const oldest = translationCache.keys().next().value;
       translationCache.delete(oldest);
@@ -123,7 +118,7 @@ async function translateText(text, from, to) {
     return translation;
   }
 
-  return null; // Translation failed or was a no-op
+  return null;
 }
 
 // ── Message Handler ──────────────────────────────────────────
@@ -142,10 +137,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   if (message.type === 'GET_SETTINGS') {
     chrome.storage.local
-      .get(['enabled', 'mode', 'sendMode', 'readMode'])
+      .get(['enabled', 'myLanguage', 'partnerLanguage', 'mode', 'sendMode', 'readMode'])
       .then((res) => {
         sendResponse({
           enabled: res.enabled !== false,
+          myLanguage: res.myLanguage || 'en',
+          partnerLanguage: res.partnerLanguage || 'es',
           mode: res.mode !== undefined ? res.mode : 'off',
           sendMode: res.sendMode !== undefined ? res.sendMode : 'off',
           readMode: res.readMode !== undefined ? res.readMode : 'off',
@@ -156,7 +153,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   if (message.type === 'UPDATE_SETTINGS') {
     chrome.storage.local.set(message.settings).then(async () => {
-      const fullSettings = await chrome.storage.local.get(['enabled', 'mode', 'sendMode', 'readMode']);
+      const fullSettings = await chrome.storage.local.get(['enabled', 'myLanguage', 'partnerLanguage', 'mode', 'sendMode', 'readMode']);
       chrome.tabs.query({}, (tabs) => {
         tabs.forEach((tab) => {
           chrome.tabs.sendMessage(tab.id, {

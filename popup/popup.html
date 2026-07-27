@@ -51,6 +51,101 @@
       </div>
     </div>
 
+    <!-- Language Pair Configuration Card -->
+    <div class="card card--setting">
+      <div class="card-header-row">
+        <span class="card-label">My Language (Primary)</span>
+      </div>
+      <div class="select-wrapper">
+        <select class="custom-select" id="myLanguageSelect">
+          <option value="en">🇬🇧 English</option>
+          <option value="hi">🇮🇳 Hindi (हिंदी)</option>
+          <option value="es">🇪🇸 Spanish (Español)</option>
+          <option value="fr">🇫🇷 French (Français)</option>
+          <option value="de">🇩🇪 German (Deutsch)</option>
+          <option value="zh-CN">🇨🇳 Chinese (Simplified)</option>
+          <option value="ja">🇯🇵 Japanese (日本語)</option>
+          <option value="ar">🇸🇦 Arabic (العربية)</option>
+          <option value="pt">🇵🇹 Portuguese (Português)</option>
+          <option value="ru">🇷🇺 Russian (Русский)</option>
+          <option value="ko">🇰🇷 Korean (한국어)</option>
+          <option value="it">🇮🇹 Italian (Italiano)</option>
+          <option value="tr">🇹🇷 Turkish (Türkçe)</option>
+          <option value="nl">🇳🇱 Dutch (Nederlands)</option>
+          <option value="pl">🇵🇱 Polish (Polski)</option>
+          <option value="vi">🇻🇳 Vietnamese (Tiếng Việt)</option>
+          <option value="th">🇹🇭 Thai (ไทย)</option>
+          <option value="id">🇮🇩 Indonesian</option>
+          <option value="bn">🇧🇩 Bengali (বাংলা)</option>
+          <option value="pa">🇮🇳 Punjabi (ਪੰਜਾਬੀ)</option>
+          <option value="gu">🇮🇳 Gujarati (ગુજરાતી)</option>
+          <option value="ta">🇮🇳 Tamil (தமிழ்)</option>
+          <option value="te">🇮🇳 Telugu (తెలుగు)</option>
+          <option value="mr">🇮🇳 Marathi (मराठी)</option>
+          <option value="ur">🇵🇰 Urdu (اردو)</option>
+          <option value="fa">🇮🇷 Persian (فارسی)</option>
+          <option value="he">🇮🇱 Hebrew (עברית)</option>
+          <option value="sv">🇸🇪 Swedish (Svenska)</option>
+          <option value="uk">🇺🇦 Ukrainian (Українська)</option>
+          <option value="el">🇬🇷 Greek (Ελληνικά)</option>
+        </select>
+        <div class="select-arrow">▼</div>
+      </div>
+    </div>
+
+    <!-- Swap Languages Button -->
+    <div class="swap-row">
+      <button class="swap-btn" id="swapModesBtn" title="Swap My Language & Partner Language">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="swap-icon">
+          <path d="M7 16V4M7 4L3 8M7 4L11 8"/>
+          <path d="M17 8V20M17 20L21 16M17 20L13 16"/>
+        </svg>
+        <span>Swap Languages</span>
+      </button>
+    </div>
+
+    <!-- Partner Language Card -->
+    <div class="card card--setting">
+      <div class="card-header-row">
+        <span class="card-label">Partner's Language (Target)</span>
+      </div>
+      <div class="select-wrapper">
+        <select class="custom-select" id="partnerLanguageSelect">
+          <option value="es" selected>🇪🇸 Spanish (Español)</option>
+          <option value="en">🇬🇧 English</option>
+          <option value="hi">🇮🇳 Hindi (हिंदी)</option>
+          <option value="fr">🇫🇷 French (Français)</option>
+          <option value="de">🇩🇪 German (Deutsch)</option>
+          <option value="zh-CN">🇨🇳 Chinese (Simplified)</option>
+          <option value="ja">🇯🇵 Japanese (日本語)</option>
+          <option value="ar">🇸🇦 Arabic (العربية)</option>
+          <option value="pt">🇵🇹 Portuguese (Português)</option>
+          <option value="ru">🇷🇺 Russian (Русский)</option>
+          <option value="ko">🇰🇷 Korean (한국어)</option>
+          <option value="it">🇮🇹 Italian (Italiano)</option>
+          <option value="tr">🇹🇷 Turkish (Türkçe)</option>
+          <option value="nl">🇳🇱 Dutch (Nederlands)</option>
+          <option value="pl">🇵🇱 Polish (Polski)</option>
+          <option value="vi">🇻🇳 Vietnamese (Tiếng Việt)</option>
+          <option value="th">🇹🇭 Thai (ไทย)</option>
+          <option value="id">🇮🇩 Indonesian</option>
+          <option value="bn">🇧🇩 Bengali (বাংলা)</option>
+          <option value="pa">🇮🇳 Punjabi (ਪੰਜਾਬੀ)</option>
+          <option value="gu">🇮🇳 Gujarati (ગુજરાતી)</option>
+          <option value="ta">🇮🇳 Tamil (தமிழ்)</option>
+          <option value="te">🇮🇳 Telugu (తెలుగు)</option>
+          <option value="mr">🇮🇳 Marathi (मराठी)</option>
+          <option value="ur">🇵🇰 Urdu (اردو)</option>
+          <option value="fa">🇮🇷 Persian (فارسی)</option>
+          <option value="he">🇮🇱 Hebrew (עברית)</option>
+          <option value="sv">🇸🇪 Swedish (Svenska)</option>
+          <option value="uk">🇺🇦 Ukrainian (Українська)</option>
+          <option value="el">🇬🇷 Greek (Ελληνικά)</option>
+        </select>
+        <div class="select-arrow">▼</div>
+      </div>
+    </div>
+
     <!-- Outgoing (Send As) Selection Card -->
     <div class="card card--setting">
       <div class="card-header-row">
@@ -60,22 +155,10 @@
       <div class="select-wrapper">
         <select class="custom-select" id="sendModeSelect">
           <option value="off" selected>⛔ Original (Do Not Translate Outgoing)</option>
-          <option value="en">🇮🇳 Type Hindi ➔ 🇬🇧 Send in English</option>
-          <option value="hi">🇬🇧 Type English ➔ 🇮🇳 Send in Hindi</option>
+          <option value="translate" id="sendTranslateOption">🌐 Type in My Language ➔ Send in Partner Language</option>
         </select>
         <div class="select-arrow">▼</div>
       </div>
-    </div>
-
-    <!-- Swap / Exchange Directions Button -->
-    <div class="swap-row">
-      <button class="swap-btn" id="swapModesBtn" title="Exchange Outgoing & Incoming Modes">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="swap-icon">
-          <path d="M7 16V4M7 4L3 8M7 4L11 8"/>
-          <path d="M17 8V20M17 20L21 16M17 20L13 16"/>
-        </svg>
-        <span>Swap Directions</span>
-      </button>
     </div>
 
     <!-- Incoming (Read As) Selection Card -->
@@ -87,8 +170,7 @@
       <div class="select-wrapper">
         <select class="custom-select" id="readModeSelect">
           <option value="off" selected>⛔ Original (Do Not Translate Incoming)</option>
-          <option value="hi">🇬🇧 Incoming English ➔ 🇮🇳 View in Hindi</option>
-          <option value="en">🇮🇳 Incoming Hindi ➔ 🇬🇧 View in English</option>
+          <option value="translate" id="readTranslateOption">🌐 Auto-Detect Incoming ➔ View in My Language</option>
         </select>
         <div class="select-arrow">▼</div>
       </div>

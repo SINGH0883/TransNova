@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "TransNova — Chat Translator",
   "version": "2.0.0",
-  "description": "Real-time Hindi ↔ English chat translator for web chatting platforms.",
+  "description": "Universal all-language real-time web chat translator powered by AI.",
   "permissions": [
     "storage",
     "activeTab"

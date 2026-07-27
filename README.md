@@ -1,12 +1,12 @@
-# TransNova — Universal Hindi ↔ English Web Chat Translator
+# TransNova — Universal Web Chat AI Translator
 
 <div align="center">
 
 <img src="./icons/icon128.png" width="128" alt="TransNova Logo" />
 
-**Real-time Hindi ↔ English AI Translation for Web Chat Platforms**
+**Real-time Universal All-Language AI Translation for Web Chat Platforms**
 
-Type in Hindi, send in English. Receive in English, read in Hindi. Works seamlessly across supported web chat apps like WhatsApp Web, Telegram Web, Discord Web, Slack Web, Messenger Web, and Snapchat Web.
+Type in your native language, send in any target language. Auto-detect incoming messages from any language and read in your preferred primary language. Works seamlessly across supported web chat apps (WhatsApp Web, Telegram Web, Discord Web, Slack Web, Messenger Web, Snapchat Web).
 
 [![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white)](#installation)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-8B5CF6?style=for-the-badge)](#)
@@ -21,11 +21,11 @@ Type in Hindi, send in English. Receive in English, read in Hindi. Works seamles
 
 | Feature | Description |
 |---|---|
-| 🌐 **Dual Engine Translation** | Powered by **Google Translate API** (primary engine for instant auto-detection & Hinglish) with **MyMemory API** fallback |
-| 🎛️ **Independent Send & Read Controls** | Configure outgoing translation (Send in English/Hindi) and incoming translation (Read in Hindi/English) separately |
-| 🇮🇳 → 🇬🇧 **Hindi to English** | Type in Devanagari Hindi or Hinglish — automatically translated to English before sending |
-| 🇬🇧 → 🇮🇳 **English to Hindi** | Incoming English messages are automatically rendered in Hindi |
-| 🔀 **Romanized Hinglish Support** | Detects and translates Romanized Hindi (*"kya haal hai", "kaise ho bhai"*) as accurately as Devanagari script (*"क्या हाल है"*) |
+| 🌍 **Universal 100+ Languages** | Support for all major world languages (English, Spanish, Hindi, French, German, Chinese, Japanese, Arabic, Russian, Portuguese, Korean, Turkish, and 90+ more) |
+| 🌐 **Dual Engine Translation** | Powered by **Google Translate API** with **MyMemory API** fallback for high-accuracy auto-detection and natural translation |
+| 🎛️ **Custom Primary & Target Selection** | Set your primary language and your conversation partner's target language with quick 1-click language swapping |
+| 📤 **Outgoing Translation** | Type in your primary language — automatically translated into your partner's target language upon pressing Enter |
+| 📥 **Incoming Auto-Detection** | Incoming messages in any language are automatically detected and rendered in your primary language |
 | ⌨️ **Keyboard Shortcut** | Press `Alt + T` at any time to instantly toggle extension translation on/off |
 | 💬 **Interactive Original Text Badge** | Click the `🌐` badge on any translated message bubble to toggle between original and translated text |
 | ⚡ **Multi-Layer LRU Caching** | High-performance dual-tier caching (Content Script + Service Worker) avoids redundant API calls |

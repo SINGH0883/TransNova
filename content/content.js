@@ -155,23 +155,19 @@
     const text = platform.getInputText(inputEl);
     if (!text || !text.trim() || text.length < 2) return;
 
-    let fromLang = null;
-    let toLang = null;
+    let fromLang = settings.myLanguage || 'auto';
+    let toLang = settings.partnerLanguage || 'es';
 
-    const isEng = TransNovaTranslator.isEnglish(text);
-    const isHin = TransNovaTranslator.isHindi(text);
+    const sendMode = settings.sendMode;
+    if (sendMode === 'off') return;
 
-    const sendMode = settings.sendMode || (settings.mode === 'en-to-hi-send' ? 'hi' : settings.mode === 'en-to-hi' || settings.mode === 'read-en' ? 'off' : 'en');
-
-    if (sendMode === 'en' && isHin) {
-      fromLang = 'hi';
+    if (sendMode === 'en') {
+      fromLang = 'auto';
       toLang = 'en';
-    } else if (sendMode === 'hi' && isEng) {
-      fromLang = 'en';
+    } else if (sendMode === 'hi') {
+      fromLang = 'auto';
       toLang = 'hi';
     }
-
-    if (!fromLang || !toLang) return;
 
     // If context was invalidated (extension reloaded), do not block Enter!
     if (isContextInvalidated) {
@@ -289,29 +285,17 @@
       return;
     }
 
-    let fromLang = null;
-    let toLang = null;
+    const readMode = settings.readMode;
+    if (readMode === 'off') return;
 
-    const isDevHin = TransNovaTranslator.isDevanagariHindi(text);
-    const isRomHin = TransNovaTranslator.isRomanizedHindi(text);
-    const isHin = isDevHin || isRomHin;
-    const isEng = TransNovaTranslator.isEnglish(text);
-
-    const readMode = settings.readMode || 'off';
+    let fromLang = 'auto';
+    let toLang = settings.myLanguage || 'en';
 
     if (readMode === 'hi') {
-      if (isEng || isRomHin) {
-        fromLang = 'auto';
-        toLang = 'hi';
-      }
+      toLang = 'hi';
     } else if (readMode === 'en') {
-      if (isHin) {
-        fromLang = 'auto';
-        toLang = 'en';
-      }
+      toLang = 'en';
     }
-
-    if (!fromLang || !toLang) return;
 
     msgEl.setAttribute('data-transnova-processed', 'true');
     processedMessages.add(msgEl);
