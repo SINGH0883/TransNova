@@ -138,9 +138,20 @@
   }
 
   // ── Universal Input Interceptor ──────────────────────────────
+  const translatedInputs = new WeakMap();
+
   function setupUniversalInputInterceptor() {
     document.addEventListener('keydown', handleKeyDown, true);
-    console.log('[TransNova Universal] Input interceptor active across all web inputs.');
+    document.addEventListener('input', (e) => {
+      if (e.target && TransNovaPlatforms.isInputElement(e.target)) {
+        const text = TransNovaPlatforms.getInputText(e.target);
+        const prevTranslation = translatedInputs.get(e.target);
+        if (prevTranslation && text.trim().toLowerCase() !== prevTranslation.trim().toLowerCase()) {
+          translatedInputs.delete(e.target);
+        }
+      }
+    }, true);
+    console.log('[TransNova Universal] 2-Step Enter Interceptor active (1st Enter: Translate, 2nd Enter: Send).');
   }
 
   async function handleKeyDown(e) {
@@ -157,11 +168,19 @@
     const text = platform.getInputText(inputEl);
     if (!text || !text.trim() || text.length < 2) return;
 
-    let fromLang = settings.myLanguage || 'auto';
-    let toLang = settings.partnerLanguage || 'es';
-
     const sendMode = settings.sendMode;
     if (sendMode === 'off') return;
+
+    // Check if this text is already the translated result (2nd Enter press -> Send)
+    const prevTranslation = translatedInputs.get(inputEl);
+    if (prevTranslation && prevTranslation.trim().toLowerCase() === text.trim().toLowerCase()) {
+      console.log('[TransNova Chat] 2nd Enter press detected -> Allowing natural send for translated message:', text);
+      translatedInputs.delete(inputEl);
+      return;
+    }
+
+    let fromLang = settings.myLanguage || 'auto';
+    let toLang = settings.partnerLanguage || 'es';
 
     if (sendMode === 'en') {
       fromLang = 'auto';
@@ -178,7 +197,7 @@
       return;
     }
 
-    console.log('[TransNova Chat] Intercepted outgoing input:', text, '(', fromLang, '➔', toLang, ')');
+    console.log('[TransNova Chat] 1st Enter press -> Translating in-place:', text, '(', fromLang, '➔', toLang, ')');
 
     e.preventDefault();
     e.stopPropagation();
@@ -198,11 +217,13 @@
 
       if (inputEl.style) inputEl.style.opacity = '';
 
-      if (response && response.success && response.translation) {
-        console.log('[TransNova Chat] ✓ Translated in input box:', text, '➔', response.translation);
+      if (response && response.success && response.translation && response.translation.trim().toLowerCase() !== text.trim().toLowerCase()) {
+        console.log('[TransNova Chat] ✓ Translated on 1st Enter:', text, '➔', response.translation);
         await TransNovaPlatforms.setInputText(inputEl, response.translation);
+        // Mark input as translated so 2nd Enter press sends it
+        translatedInputs.set(inputEl, response.translation);
       } else {
-        console.log('[TransNova Chat] Translation fallback: keeping original text in input');
+        console.log('[TransNova Chat] Translation fallback/no-op: keeping original text in input');
       }
     } catch (err) {
       if (inputEl.style) inputEl.style.opacity = '';
