@@ -32,15 +32,60 @@ function getCacheKey(text, from, to) {
 // ── Google Translate (Free) ──────────────────────────────────
 const GOOGLE_URL = 'https://translate.googleapis.com/translate_a/single';
 
+function devanagariToHinglish(text) {
+  if (!text) return text;
+  const map = {
+    'अ':'a', 'आ':'aa', 'इ':'i', 'ई':'ee', 'उ':'u', 'ऊ':'oo', 'ऋ':'ri', 'ए':'e', 'ऐ':'ai', 'ओ':'o', 'औ':'au', 'अं':'an', 'अः':'ah',
+    'क':'k', 'ख':'kh', 'ग':'g', 'घ':'gh', 'ङ':'ng',
+    'च':'ch', 'छ':'chh', 'ज':'j', 'झ':'jh', 'ञ':'nya',
+    'ट':'t', 'ठ':'th', 'ड':'d', 'ढ':'dh', 'ण':'n',
+    'त':'t', 'थ':'th', 'द':'d', 'ध':'dh', 'न':'n',
+    'प':'p', 'फ':'ph', 'ब':'b', 'भ':'bh', 'म':'m',
+    'य':'y', 'र':'r', 'ल':'l', 'व':'v', 'श':'sh', 'ष':'sh', 'स':'s', 'ह':'h',
+    'क़':'q', 'ख़':'kh', 'ग़':'g', 'ज़':'z', 'ड़':'r', 'ढ़':'rh', 'फ़':'f',
+    'ा':'a', 'ि':'i', 'ी':'ee', 'ु':'u', 'ू':'oo', 'ृ':'ri', 'े':'e', 'ै':'ai', 'ो':'o', 'ौ':'au', 'ं':'n', 'ँ':'n', 'ः':'h',
+    '्': ''
+  };
+  const consonants = 'कखगघङचछजझञटठडढणतथदधनपफबभमयरलवशषसहक़ख़ग़ज़ड़ढ़फ़';
+  const matras = 'ािीुूृेैोौंशँ';
+
+  let result = '';
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    const nextChar = i + 1 < text.length ? text[i + 1] : '';
+
+    if (consonants.includes(char)) {
+      const roman = map[char] || char;
+      if (matras.includes(nextChar) || nextChar === '्' || !nextChar || nextChar === ' ' || /[^\u0900-\u097F]/.test(nextChar)) {
+        result += roman;
+      } else {
+        result += roman + 'a';
+      }
+    } else if (map[char] !== undefined) {
+      result += map[char];
+    } else {
+      result += char;
+    }
+  }
+  return result.replace(/\s+/g, ' ').trim();
+}
+
 async function translateViaGoogle(text, from, to) {
   try {
+    const isHinglishTarget = to === 'hi-Latn' || to === 'hinglish';
+    const targetLang = isHinglishTarget ? 'hi' : to;
+
     const params = new URLSearchParams({
       client: 'gtx',
       sl: !from || from === 'auto' ? 'auto' : from,
-      tl: to,
+      tl: targetLang,
       dt: 't',
       q: text.trim(),
     });
+
+    if (isHinglishTarget) {
+      params.append('dt', 'rm');
+    }
 
     const response = await fetch(`${GOOGLE_URL}?${params.toString()}`);
     if (!response.ok) throw new Error(`Google API ${response.status}`);
@@ -48,11 +93,30 @@ async function translateViaGoogle(text, from, to) {
     const data = await response.json();
 
     if (data && data[0]) {
+      // If target is Hinglish, check for Romanized output from Google API
+      if (isHinglishTarget) {
+        let romanized = '';
+        for (const segment of data[0]) {
+          if (segment && segment[2]) {
+            romanized += segment[2] + ' ';
+          } else if (segment && segment[3]) {
+            romanized += segment[3] + ' ';
+          }
+        }
+        if (romanized.trim()) {
+          console.log(`[TransNova SW] Google translated to Hinglish: "${text}" → "${romanized.trim()}"`);
+          return romanized.trim();
+        }
+      }
+
       let translated = '';
       for (const segment of data[0]) {
-        if (segment[0]) translated += segment[0];
+        if (segment && segment[0]) translated += segment[0];
       }
       if (translated.trim()) {
+        if (isHinglishTarget && /[\u0900-\u097F]/.test(translated)) {
+          translated = devanagariToHinglish(translated);
+        }
         console.log(`[TransNova SW] Google translated: "${text}" (${from || 'auto'} → ${to}) → "${translated}"`);
         return translated.trim();
       }

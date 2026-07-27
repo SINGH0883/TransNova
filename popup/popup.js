@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const swapModesBtn = document.getElementById('swapModesBtn');
 
   const LANG_NAMES = {
-    en: 'English', hi: 'Hindi', es: 'Spanish', fr: 'French', de: 'German',
+    'hi-Latn': 'Hinglish', hi: 'Hindi', en: 'English', es: 'Spanish', fr: 'French', de: 'German',
     'zh-CN': 'Chinese', ja: 'Japanese', ar: 'Arabic', pt: 'Portuguese',
     ru: 'Russian', ko: 'Korean', it: 'Italian', tr: 'Turkish', nl: 'Dutch',
     pl: 'Polish', vi: 'Vietnamese', th: 'Thai', id: 'Indonesian', bn: 'Bengali',
