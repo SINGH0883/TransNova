@@ -86,6 +86,8 @@
       const response = await sendMessageSafe({ type: 'GET_SETTINGS' });
       if (response) {
         settings.enabled = response.enabled !== false;
+        settings.myLanguage = response.myLanguage || 'en';
+        settings.partnerLanguage = response.partnerLanguage || 'es';
         settings.mode = response.mode || 'off';
         settings.sendMode = response.sendMode !== undefined ? response.sendMode : 'off';
         settings.readMode = response.readMode !== undefined ? response.readMode : 'off';
@@ -387,7 +389,20 @@
     return badge;
   }
 
+  const LANG_NAMES = {
+    'hi-Latn': 'Hinglish', hi: 'Hindi', bho: 'Bhojpuri', en: 'English', es: 'Spanish', fr: 'French', de: 'German',
+    'zh-CN': 'Chinese', ja: 'Japanese', ar: 'Arabic', pt: 'Portuguese', ru: 'Russian', ko: 'Korean',
+    it: 'Italian', tr: 'Turkish', nl: 'Dutch', pl: 'Polish', vi: 'Vietnamese', th: 'Thai', id: 'Indonesian',
+    bn: 'Bengali', pa: 'Punjabi', gu: 'Gujarati', ta: 'Tamil', te: 'Telugu', mr: 'Marathi', ur: 'Urdu',
+    fa: 'Persian', he: 'Hebrew', sv: 'Swedish', uk: 'Ukrainian', el: 'Greek'
+  };
+
   function showActivationToast() {
+    const myLang = settings.myLanguage || 'en';
+    const partnerLang = settings.partnerLanguage || 'es';
+    const myName = LANG_NAMES[myLang] || myLang.toUpperCase();
+    const partnerName = LANG_NAMES[partnerLang] || partnerLang.toUpperCase();
+
     const toast = document.createElement('div');
     toast.className = 'transnova-toast';
     toast.innerHTML = `
@@ -396,8 +411,8 @@
           <path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>
       </div>
       <div class="transnova-toast-text">
-        <strong>TransNova Universal</strong>
-        <span>Hindi ↔ English • ${platform.name}</span>
+        <strong>TransNova AI</strong>
+        <span>${myName} ↔ ${partnerName} • ${platform ? platform.name : 'Web App'}</span>
       </div>`;
     document.body.appendChild(toast);
     setTimeout(() => {
@@ -444,14 +459,16 @@
       document.body.appendChild(indicator);
     }
 
+    const myLang = settings.myLanguage || 'en';
+    const partnerLang = settings.partnerLanguage || 'es';
+    const myName = LANG_NAMES[myLang] || myLang.toUpperCase();
+    const partnerName = LANG_NAMES[partnerLang] || partnerLang.toUpperCase();
+
     let text = 'TransNova';
-    if (sendMode === 'en' && readMode === 'hi') text = 'हि ↔ EN (Both)';
-    else if (sendMode === 'en' && readMode === 'en') text = 'हि → EN (Both)';
-    else if (sendMode === 'hi' && readMode === 'hi') text = 'EN → हि (Both)';
-    else if (sendMode === 'en') text = 'हि → EN (Send)';
-    else if (sendMode === 'hi') text = 'EN → हि (Send)';
-    else if (readMode === 'hi') text = 'EN → हि (Read)';
-    else if (readMode === 'en') text = 'हि → EN (Read)';
+    if (sendMode === 'translate' && readMode === 'translate') text = `${myName} ↔ ${partnerName}`;
+    else if (sendMode === 'translate') text = `Send ${partnerName}`;
+    else if (readMode === 'translate') text = `Read ${myName}`;
+    else text = `${myName} ↔ ${partnerName}`;
 
     indicator.textContent = text;
   }
