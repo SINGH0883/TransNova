@@ -74,20 +74,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     const partnerName = LANG_NAMES[partnerLang] || partnerLang.toUpperCase();
 
     if (sendTranslateOption) {
-      sendTranslateOption.textContent = `🌐 Type in ${myName} ➔ Send in ${partnerName}`;
+      sendTranslateOption.textContent = `🌐 Translate to ${partnerName}`;
     }
     if (readTranslateOption) {
-      readTranslateOption.textContent = `🌐 Auto-Detect Incoming ➔ View in ${myName}`;
+      readTranslateOption.textContent = `🌐 Translate to ${myName}`;
     }
 
     const sendMode = sendModeSelect.value;
     const readMode = readModeSelect.value;
 
     if (sendModeBadge) {
-      sendModeBadge.textContent = sendMode === 'translate' ? `Send ${partnerName}` : 'Outgoing Off';
+      sendModeBadge.textContent = sendMode === 'translate' ? `Send ${partnerName}` : 'Off';
     }
     if (readModeBadge) {
-      readModeBadge.textContent = readMode === 'translate' ? `Read in ${myName}` : 'Incoming Off';
+      readModeBadge.textContent = readMode === 'translate' ? `Read ${myName}` : 'Off';
     }
   }
 
