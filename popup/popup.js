@@ -19,6 +19,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   const popupContainer = document.querySelector('.popup-container');
   const swapModesBtn = document.getElementById('swapModesBtn');
 
+  const myLangFlag = document.getElementById('myLangFlag');
+  const partnerLangFlag = document.getElementById('partnerLangFlag');
+
+  const FLAG_CODES = {
+    en: 'gb', 'hi-Latn': 'in', hi: 'in', es: 'es', fr: 'fr', de: 'de',
+    'zh-CN': 'cn', ja: 'jp', ar: 'sa', pt: 'pt', ru: 'ru', ko: 'kr',
+    it: 'it', tr: 'tr', nl: 'nl', pl: 'pl', vi: 'vn', th: 'th',
+    id: 'id', bn: 'bd', pa: 'in', gu: 'in', ta: 'in', te: 'in',
+    mr: 'in', ur: 'pk', fa: 'ir', he: 'il', sv: 'se', uk: 'ua', el: 'gr'
+  };
+
   const LANG_NAMES = {
     'hi-Latn': 'Hinglish', hi: 'Hindi', en: 'English', es: 'Spanish', fr: 'French', de: 'German',
     'zh-CN': 'Chinese', ja: 'Japanese', ar: 'Arabic', pt: 'Portuguese',
@@ -33,6 +44,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     'app.slack.com', 'slack.com', 'messenger.com', 'facebook.com',
     'web.snapchat.com', 'snapchat.com',
   ];
+
+  function updateFlags() {
+    const myLang = myLanguageSelect ? myLanguageSelect.value : 'en';
+    const partnerLang = partnerLanguageSelect ? partnerLanguageSelect.value : 'es';
+
+    const myCountry = FLAG_CODES[myLang] || 'gb';
+    const partnerCountry = FLAG_CODES[partnerLang] || 'in';
+
+    if (myLangFlag) myLangFlag.src = `https://flagcdn.com/20x15/${myCountry}.png`;
+    if (partnerLangFlag) partnerLangFlag.src = `https://flagcdn.com/20x15/${partnerCountry}.png`;
+  }
 
   // ── Load Current Settings ──────────────────────────────────
   async function loadSettings() {
@@ -68,6 +90,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function updateDynamicLabels() {
+    updateFlags();
+
     const myLang = myLanguageSelect ? myLanguageSelect.value : 'en';
     const partnerLang = partnerLanguageSelect ? partnerLanguageSelect.value : 'es';
     const myName = LANG_NAMES[myLang] || myLang.toUpperCase();

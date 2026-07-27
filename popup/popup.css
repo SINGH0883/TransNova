@@ -224,17 +224,37 @@ body {
 }
 
 .swap-icon {
+  transform: rotate(90deg);
   transition: transform 0.3s ease;
 }
 
 .swap-icon.spinning {
-  transform: rotate(180deg);
+  transform: rotate(270deg);
 }
 
 /* ── Custom Select Inputs ──────────────────────────────────── */
 .select-wrapper {
   position: relative;
   width: 100%;
+}
+
+.select-wrapper--flag {
+  display: flex;
+  align-items: center;
+}
+
+.mini-flag-icon {
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 12px;
+  object-fit: cover;
+  border-radius: 2px;
+  pointer-events: none;
+  z-index: 2;
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .custom-select {
@@ -255,6 +275,10 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   transition: border-color 0.15s ease;
+}
+
+.custom-select--flag {
+  padding-left: 26px;
 }
 
 .custom-select:hover,
