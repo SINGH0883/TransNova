@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "TransNova — Universal Hindi ↔ English Chat Translator",
+  "name": "TransNova — Chat Translator",
   "version": "2.0.0",
   "description": "Real-time Hindi ↔ English chat translator for web chatting platforms (WhatsApp Web, Telegram Web, Discord Web, Slack Web, Messenger Web, Snapchat Web).",
   "permissions": [
