@@ -145,6 +145,13 @@ TransNova features **independent controls** for outgoing and incoming messages:
 - **Press `Enter` once**: Translates your input in-place inside the chat text box so you can review or edit it.
 - **Press `Enter` a second time**: Sends the translated message.
 
+### ✏️ Editing Messages & Smart Reset
+
+1. **In-Place Review**: When you press `Enter` the first time, your typed text is replaced with the translation right inside the chat input box.
+2. **Manual Editing**: You can click into the input box and freely edit, modify, or add extra words to the translated message.
+3. **Smart Re-Translation**: If you modify the translated text, TransNova automatically detects your edits. Pressing `Enter` again will translate your newly updated phrase.
+4. **Instant Send**: If you are happy with the translation without changes, simply press `Enter` a second time to send it immediately.
+
 ### Quick Shortcut Toggle
 
 Press **`Alt + T`** to instantly pause or resume translation across all tabs without opening the popup.
