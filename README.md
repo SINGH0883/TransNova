@@ -21,7 +21,7 @@ Type in your native language, send in any target language. Auto-detect incoming 
 
 | Feature | Description |
 |---|---|
-| 🌍 **Universal Multi-Language Support** | Supports 30+ major languages sorted alphabetically (A to Z), including dedicated **Hinglish** (`hi-Latn`) & **Bhojpuri** (`bho`) |
+| 🌍 **Universal Multi-Language Support** | Supports 30+ major languages sorted alphabetically (A to Z), including dedicated **Hinglish** (`hi-Latn`), **Bhojpuri** (`bho`), & **Haryanvi** (`bgc`) |
 | ⌨️ **2-Step Enter Translation** | Press **`Enter` once** to translate in-place in the input box; press **`Enter` a second time** to send |
 | 🌐 **Dual Engine Translation** | Powered by **Google Translate API** with **MyMemory API** fallback for high-accuracy auto-detection and natural translation |
 | 🚩 **Mini Country Flags** | Crisp mini country flag icons rendered alongside every language selector |
