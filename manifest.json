@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "TransNova — Chat Translator",
   "version": "2.0.0",
-  "description": "Universal all-language real-time web chat translator powered by AI.",
+  "description": "Universal all-language real-time web chat translator.",
   "permissions": [
     "storage",
     "activeTab"
