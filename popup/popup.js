@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const partnerLangFlag = document.getElementById('partnerLangFlag');
 
   const FLAG_CODES = {
-    en: 'gb', 'hi-Latn': 'in', hi: 'in', es: 'es', fr: 'fr', de: 'de',
+    en: 'gb', 'hi-Latn': 'in', hi: 'in', bho: 'in', es: 'es', fr: 'fr', de: 'de',
     'zh-CN': 'cn', ja: 'jp', ar: 'sa', pt: 'pt', ru: 'ru', ko: 'kr',
     it: 'it', tr: 'tr', nl: 'nl', pl: 'pl', vi: 'vn', th: 'th',
     id: 'id', bn: 'bd', pa: 'in', gu: 'in', ta: 'in', te: 'in',
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 
   const LANG_NAMES = {
-    'hi-Latn': 'Hinglish', hi: 'Hindi', en: 'English', es: 'Spanish', fr: 'French', de: 'German',
+    'hi-Latn': 'Hinglish', hi: 'Hindi', bho: 'Bhojpuri', en: 'English', es: 'Spanish', fr: 'French', de: 'German',
     'zh-CN': 'Chinese', ja: 'Japanese', ar: 'Arabic', pt: 'Portuguese',
     ru: 'Russian', ko: 'Korean', it: 'Italian', tr: 'Turkish', nl: 'Dutch',
     pl: 'Polish', vi: 'Vietnamese', th: 'Thai', id: 'Indonesian', bn: 'Bengali',
