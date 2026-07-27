@@ -144,7 +144,7 @@
     document.addEventListener('keydown', handleKeyDown, true);
     document.addEventListener('input', (e) => {
       if (e.target && TransNovaPlatforms.isInputElement(e.target)) {
-        const text = TransNovaPlatforms.getInputText(e.target);
+        const text = (platform && platform.getInputText) ? platform.getInputText(e.target) : TransNovaPlatforms.getInputText(e.target);
         const prevTranslation = translatedInputs.get(e.target);
         if (prevTranslation && text.trim().toLowerCase() !== prevTranslation.trim().toLowerCase()) {
           translatedInputs.delete(e.target);
@@ -164,8 +164,8 @@
     const active = document.activeElement;
     if (!active || !TransNovaPlatforms.isInputElement(active)) return;
 
-    const inputEl = platform.getInputElement() || active;
-    const text = platform.getInputText(inputEl);
+    const inputEl = (platform && platform.getInputElement) ? platform.getInputElement() : active;
+    const text = (platform && platform.getInputText) ? platform.getInputText(inputEl) : TransNovaPlatforms.getInputText(inputEl);
     if (!text || !text.trim() || text.length < 2) return;
 
     const sendMode = settings.sendMode;
