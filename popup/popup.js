@@ -163,8 +163,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       popupContainer.classList.remove('disabled');
     } else {
       statusBadge.classList.add('inactive');
-      statusBadge.querySelector('.status-text').textContent = 'Paused';
-      toggleHint.textContent = 'Translation is currently paused';
+      statusBadge.querySelector('.status-text').textContent = 'OFF';
+      toggleHint.textContent = 'Translation is currently turned off';
       popupContainer.classList.add('disabled');
     }
   }

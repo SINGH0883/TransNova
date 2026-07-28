@@ -419,6 +419,7 @@
   };
 
   function showActivationToast() {
+    if (!settings.enabled || (settings.sendMode === 'off' && settings.readMode === 'off')) return;
     const myLang = settings.myLanguage || 'en';
     const partnerLang = settings.partnerLanguage || 'es';
     const myName = LANG_NAMES[myLang] || myLang.toUpperCase();

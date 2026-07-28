@@ -392,6 +392,5 @@ body {
 
 /* ── Disabled State ────────────────────────────────────────── */
 .popup-container.disabled .card:not(.card--toggle) {
-  opacity: 0.4;
-  pointer-events: none;
+  display: none !important;
 }
