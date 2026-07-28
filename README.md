@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<img src="./icons/icon128.png" width="128" alt="TransNova Logo" />
+<img src="./icons/icon.png" width="128" alt="TransNova Logo" />
 
 **Universal All-Language Real-Time Web Chat Translator**
 
@@ -170,11 +170,7 @@ TransNova/
 ├── LICENSE                     # MIT License documentation
 ├── README.md                   # Complete documentation
 ├── icons/                      # Extension branding & toolbar icons
-│   ├── icon16.png
-│   ├── icon32.png
-│   ├── icon48.png
-│   ├── icon128.png
-│   └── icon256.png
+│   └── icon.png
 ├── lib/
 │   └── platforms.js            # Platform selectors & Lexical/DOM input adapter engine
 ├── background/
