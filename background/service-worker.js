@@ -235,14 +235,26 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 // ── Keyboard Shortcut ────────────────────────────────────────
 chrome.commands.onCommand.addListener(async (command) => {
   if (command === 'toggle-translation') {
-    const { enabled } = await chrome.storage.local.get('enabled');
-    const newState = !enabled;
-    await chrome.storage.local.set({ enabled: newState });
+    const current = await chrome.storage.local.get(['enabled', 'sendMode', 'readMode']);
+    const newState = !current.enabled;
+
+    const updates = { enabled: newState };
+    if (newState && (current.sendMode === 'off' || !current.sendMode) && (current.readMode === 'off' || !current.readMode)) {
+      updates.sendMode = 'translate';
+      updates.readMode = 'translate';
+      updates.mode = 'both';
+    }
+
+    await chrome.storage.local.set(updates);
+
+    const fullSettings = await chrome.storage.local.get(['enabled', 'myLanguage', 'partnerLanguage', 'mode', 'sendMode', 'readMode']);
+
     const tabs = await chrome.tabs.query({});
     tabs.forEach((tab) => {
       chrome.tabs.sendMessage(tab.id, {
         type: 'SETTINGS_CHANGED',
-        settings: { enabled: newState },
+        settings: fullSettings,
+        triggeredByShortcut: true,
       }).catch(() => {});
     });
     console.log(`[TransNova SW] Translation ${newState ? 'enabled' : 'disabled'} via shortcut`);

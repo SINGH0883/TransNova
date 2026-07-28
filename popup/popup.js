@@ -174,9 +174,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     const enabled = enabledToggle.checked;
     updateEnabledUI(enabled);
 
+    let sendMode = sendModeSelect.value;
+    let readMode = readModeSelect.value;
+
+    if (enabled && sendMode === 'off' && readMode === 'off') {
+      sendMode = 'translate';
+      readMode = 'translate';
+      sendModeSelect.value = 'translate';
+      readModeSelect.value = 'translate';
+    }
+
+    updateDynamicLabels();
+
     await chrome.runtime.sendMessage({
       type: 'UPDATE_SETTINGS',
-      settings: { enabled },
+      settings: {
+        enabled,
+        sendMode,
+        readMode,
+        mode: sendMode === 'translate' || readMode === 'translate' ? 'both' : 'off',
+      },
     });
   });
 
@@ -200,6 +217,23 @@ document.addEventListener('DOMContentLoaded', async () => {
       await saveSettings();
     });
   }
+
+  // ── Listen for live setting changes (Alt+T shortcut) ────
+  try {
+    chrome.storage.onChanged.addListener((changes, areaName) => {
+      if (areaName === 'local') {
+        loadSettings();
+      }
+    });
+  } catch (e) {}
+
+  try {
+    chrome.runtime.onMessage.addListener((message) => {
+      if (message.type === 'SETTINGS_CHANGED') {
+        loadSettings();
+      }
+    });
+  } catch (e) {}
 
   // ── Initialize ─────────────────────────────────────────────
   await loadSettings();

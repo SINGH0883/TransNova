@@ -105,6 +105,9 @@
       chrome.runtime.onMessage.addListener((message) => {
         if (message.type === 'SETTINGS_CHANGED') {
           Object.assign(settings, message.settings);
+          if (message.triggeredByShortcut) {
+            showToggleToast(settings.enabled);
+          }
           updateActivationIndicator();
 
           restoreAllOriginalMessages();
@@ -441,6 +444,32 @@
       toast.classList.add('transnova-toast--exit');
       setTimeout(() => toast.remove(), 400);
     }, 3000);
+  }
+
+  function showToggleToast(enabled) {
+    const existing = document.querySelector('.transnova-toast-toggle');
+    if (existing) existing.remove();
+
+    const myLang = settings.myLanguage || 'en';
+    const partnerLang = settings.partnerLanguage || 'es';
+    const myName = LANG_NAMES[myLang] || myLang.toUpperCase();
+    const partnerName = LANG_NAMES[partnerLang] || partnerLang.toUpperCase();
+
+    const toast = document.createElement('div');
+    toast.className = 'transnova-toast transnova-toast-toggle';
+    toast.innerHTML = `
+      <div class="transnova-toast-icon" style="background:${enabled ? '#10b981' : '#ef4444'}">
+        ${enabled ? '⚡' : '⛔'}
+      </div>
+      <div class="transnova-toast-text">
+        <strong>TransNova ${enabled ? 'ACTIVE' : 'OFF'}</strong>
+        <span>${enabled ? `${myName} ↔ ${partnerName}` : 'Translation turned off'}</span>
+      </div>`;
+    document.body.appendChild(toast);
+    setTimeout(() => {
+      toast.classList.add('transnova-toast--exit');
+      setTimeout(() => toast.remove(), 400);
+    }, 2500);
   }
 
   function showReloadToast() {
